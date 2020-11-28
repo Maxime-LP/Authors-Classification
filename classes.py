@@ -1,55 +1,127 @@
-#-*- coding: utf-8 -*-
+from config import fp_articles, fp_ref
 import pandas as pd
+import numpy as np
 import re
 import os
+from time import time
 from collections import defaultdict
 
-data=pd.read_csv('data.csv',sep=',',usecols=['paper_id','Authors'],index_col='paper_id')
-ref=pd.read_csv('references.csv',sep=',',usecols=['paper_id','ref_id'],index_col='paper_id')
-data.sort_values(by='paper_id',axis=0,inplace=True)
-ref.sort_values(by='paper_id',axis=0,inplace=True) 
 
-class Article:
-    def __init__(self,given_id):
-        self.id=int(given_id)
-        self.ref=ref.ref_id[self.id]
-        self.authors=data.Authors[self.id]
+class Communaute:
 
-class Author:
-    def __init__(self,name):
-        self.name=name
-        self.list_articles=data.query('self.name in data.Authors')
-        """
-        for paper_id in data.index:
-            if self.name in data.Authors[paper_id]:
-                list_articles.append(paper_id)
-        self.list_articles=list_articles
-        """
+	dict_p = defaultdict(list) # clés : id des articles, valeurs : auteurs ayant contribué à l'article
+	dict_a = defaultdict(list) # clés : noms des auteurs, valeurs : articles auxquels l'auteur a contribué
+	nb_articles = 0
+	nb_auteurs = 0
 
-    def quote0(self):
-        """
-        Auteurs cités directement par self (prof 1)
-        Retourne la liste des tuple (auteur,profondeur de la citation)
-        """
-        authors_quoted=[]
-        for article in self.list_articles:
-            for author in article.citation.authors:
-                if author not in authors_quoted:
-                    authors_quoted.append((author,1))
-        return authors_quoted
+	def aide_generale():
+		print('> Liste des opérations:')
+		print('init')
+		print('> Pour voir la documentation des commandes, entrer:')
+		print('./communaute help_maCommande')
+		print()
 
-    def quote(self,N=1):
-        """
-        Auteurs cités avec profondeur au plus égale à 1
-        Retourne la liste des tuple (auteur,profondeur de la citation)
-        """
-        if N==1:
-            return self.quote0()
-        else:
-            authors_quoted_tmp=[]
-            for article in self.list_articles:
-                for author in article.citation.authors:
-                   authors_quoted_tmp+=author.quote(N-1)
-        #suppression des doublons
-        return authors_quoted_tmp
 
+	def init(articles, references):
+		'''
+		Pre-processing d'un nouveau jeu'de données pour l'application.
+		'''
+		chemin_articles = fp_articles + articles
+		chemin_references = fp_ref + references
+
+		def init_articles(chemin_articles):
+			"""
+			Pre-processing du dossier article.d
+			Entrées : noms du fichiers contenant les résumés d'article (arborescence).
+			Sorties : un dictionnaire avec id des articles en clé et nom des auteurs y ayant contribuéet un second avec le nom d'un auteur en clé et les articles de l'auteur en valeur.
+			"""
+
+			#récupération des fichiers dans l'arborescence
+			years = sorted(os.listdir(chemin_articles))
+
+			files = []
+			nb_files = 0
+			i = 0
+
+			for year in years:
+			    files.append(os.listdir(f'{chemin_articles}/{year}'))
+			    nb_files += len(files[i])
+			    i += 1
+
+
+			# début du pre-processing
+			dict_p = defaultdict(list)
+			dict_a = defaultdict(list)
+
+			#construction du dict avec les id des articles en clés
+			for year, file_by_year in zip(years, files):
+			    for file in sorted(file_by_year):
+			        with open(f"{chemin_articles}/{year}/{file}","r") as f:
+			            nb_line_author = 0 # for pass when there is two lines with Authors => 9201039.abs
+			            for line in f:
+			                if nb_line_author < 1:
+			                    if line[:7]=="Paper: ":
+			                        tmp_paper = line[14:21]
+
+			                    if line[:9] == "Authors: ":
+			                        nb_line_author += 1
+			                        dict_p[tmp_paper] = re.split(' and |, |& ', line[9:-1])
+
+			                    if line[:8] == "Author: ": 
+			                        nb_line_author +=  1
+			                        dict_p[tmp_paper] = re.split(' and |, |& ', line[8:-1])
+
+			# construction du dict avec les auteurs en clés
+			for paper, authors in dict_p.items():
+			    for author in authors:
+			        dict_a[author].append(paper)
+
+			# Informations sur le dossier articles
+			nb_articles = len(dict_p)
+			nb_auteurs = len(dict_a)
+			print(f'> Le fichier articles contient {nb_files} fichiers.')
+			print(f'> On y recence {nb_articles} publications et {nb_auteurs} auteurs dans notre jeu de données.')
+
+			return dict_p, dict_a, nb_articles, nb_auteurs
+
+
+		def init_references(chemin_references):
+			"""
+			Pre_processing du fichier texte references.txt
+			Entrées : noms du fichiers contenant les references (fichier txt)
+			Sorties : dictionnaire avec id des articles en clé et id des articles références dans le-dit article en valeurs.
+			"""
+
+			nb_relations = 0
+			dict_ref = defaultdict(list)
+
+			# récupération et pre-processing du fichier
+			with open(f'{chemin_references}',"r") as f:
+			    for line in f:
+			        line = line[:-1].split(' ')
+			        dict_ref[line[0]].append(line[1])
+			        nb_relations += 1
+
+			# Informations sur le fichier references
+			print(f'> Le fichier references contient {nb_relations} relations.')
+
+			return dict_ref
+
+
+		dict_p, dict_a, Communaute.nb_article, nb_auteurs = init_articles(chemin_articles)
+		init_references(chemin_references)
+		print("> Fin du chargement des données.")
+
+
+
+class Article(Communaute):
+	def __init__(self):
+		return
+
+
+
+"""class Auteur(Community):
+ 	def __init__(self,name):
+         self.name = name # nom de l'auteur
+         self.articles = data.query('self.name in data.Authors')"""
+         # articles auxquels l'auteur a contribué
