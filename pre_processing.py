@@ -5,6 +5,8 @@ import re
 import os
 from time import time
 from collections import defaultdict
+from pylatexenc.latex2text import LatexNodes2Text
+
 
 # pp := pre-processing
 
@@ -24,41 +26,49 @@ def pp_articles(chemin_articles):
 	i = 0
 
 	for year in years:
-	    files.append(os.listdir(f'{chemin_articles}/{year}'))
-	    nb_files += len(files[i])
-	    i += 1
+		files.append(os.listdir(f'{chemin_articles}/{year}'))
+		nb_files += len(files[i])
+		i += 1
 
 
 	# début du pre-processing
 	dict_p = defaultdict(list)
 	dict_a = defaultdict(list)
 
+	progression=1
+
 	#construction du dict avec les id des articles en clés
 	for year, file_by_year in zip(years, files):
-	    for file in sorted(file_by_year):
-	        with open(f"{chemin_articles}/{year}/{file}","r") as f:
-	            nb_line_author = 0 # dans le cas ou il y a 2 lignes Auteur(s) => 9201039.abs
-	            for line in f:
-	                if nb_line_author < 1:
-	                    if line[:7]=="Paper: ":
-	                    	# récupère id de l'article
-	                        tmp_paper = int(line[14:21])
+		for file in sorted(file_by_year):
+			with open(f"{chemin_articles}/{year}/{file}","r",encoding="utf-8") as f:
+				nb_line_author = 0 # dans le cas ou il y a 2 lignes Auteur(s) => 9201039.abs
+				for line in f:
+					if nb_line_author < 1:
+						if line[:7]=="Paper: ":
+							# récupère id de l'article
+							tmp_paper = int(line[14:21])
 
-	                    if line[:9] == "Authors: ":
-	                    	# récupère nom des auteurs dans une liste
-	                        nb_line_author += 1
-	                        dict_p[tmp_paper] = re.split(' and |, |& ', line[9:-1]) 
+						if line[:9] == "Authors: ":
+							# récupère nom des auteurs dans une liste
+							nb_line_author += 1
+							tmp =re.split(' and | ,|,|, |& ',line[9:-1])
+							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
-	                    if line[:8] == "Author: ":
-	                    	# récupère nom des auteurs dans une liste
-	                        nb_line_author +=  1
-	                        dict_p[tmp_paper] = re.split(' and |, |& ', line[8:-1])
+						if line[:8] == "Author: ":
+							# récupère nom des auteurs dans une liste
+							nb_line_author +=  1
+							tmp = re.split(' and | ,|,|, |& ', line[8:-1])
+							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
+
+			progression_pct=progression/nb_files*100
+			if progression_pct%5==0 : print(f'progression : {progression_pct} %')
+			progression+=1
 
 
 	# construction du dict avec les auteurs en clés
 	for paper, authors in dict_p.items():
-	    for author in authors:
-	        dict_a[author].append(paper)
+		for author in authors:
+			dict_a[author].append(paper)
 
 	# Informations sur le dossier articles
 	nb_articles = len(dict_p)
@@ -86,12 +96,12 @@ def pp_references(chemin_references):
 
 		# récupération et pre-processing du fichier
 		with open(f'{chemin_references}',"r") as f:
-		    for line in f:
-		        line = line[:-1].split(' ')
-		        # on change le type des id: str vers int
-		        line = [int(line[i]) for i in [0,1]]
-		        dict_ref[line[0]].append(line[1])
-		        nb_relations += 1
+			for line in f:
+				line = line[:-1].split(' ')
+				# on change le type des id: str vers int
+				line = [int(line[i]) for i in [0,1]]
+				dict_ref[line[0]].append(line[1])
+				nb_relations += 1
 
 		# Informations sur le fichier references
 		print(f'> Le fichier references contient {nb_relations} relations.')
@@ -133,9 +143,10 @@ def pre_processing(articles, references):
 
 
 	# écriture des DataFrame dans des fichier format csv
-	df_p.to_csv(f'data/{nom_articles1}.csv', sep=',', encoding='utf-8')
-	df_a.to_csv(f'data/{nom_articles2}.csv', sep=',', encoding='utf-8')
-	df_a.to_csv(f'data/{nom_references}.csv', sep=',', encoding='utf-8')
+	#les accents ne passent pas
+	df_p.to_csv(f'{nom_articles1}.csv', sep=',', encoding='utf_32')
+	df_a.to_csv(f'{nom_articles2}.csv', sep=',', encoding='utf_32')
+	df_a.to_csv(f'{nom_references}.csv', sep=',', encoding='utf_32')
 
 	print("> Fin du chargement des données.")
 	return 

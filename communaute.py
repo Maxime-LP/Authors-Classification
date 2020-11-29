@@ -7,7 +7,6 @@ articles et d'un fichier contenant les références des articles.
 """
 
 import sys
-import classes
 from pre_processing import pre_processing
 
 
@@ -16,8 +15,6 @@ def aide():
 	print('init')
 	print('> Utiliser une commande:')
 	print('./communaute.py maCommande argument1 argument2')
-
-
 
 if __name__ == "__main__":
 

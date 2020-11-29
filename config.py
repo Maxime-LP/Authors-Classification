@@ -1,9 +1,9 @@
 
 # chemin d'accès aux dossier contenant les articles
-fp_articles = "/home/amait/Documents/python/projet_poc/archive/"
+fp_articles = r'C:\Users\lepau\OneDrive\Desktop'
 
 # chemin d'accès aux dossier contenant les articles
-fp_ref = "/home/amait/Documents/python/projet_poc/archive/"
+fp_ref = r'C:\Users\lepau\OneDrive\Desktop'
 
 # nom du fichier crée après le pre-processing du dossier articles
 nom_articles1 = "resume_articles"
