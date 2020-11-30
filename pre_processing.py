@@ -61,7 +61,7 @@ def pp_articles(chemin_articles):
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
 			progression_pct=progression/nb_files*100
-			if progression_pct%5==0 : print(f'progression : {progression_pct} %')
+			if progression_pct%10==0 : os.system('cls');print(f'progression : {progression_pct} %')
 			progression+=1
 
 
