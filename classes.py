@@ -23,7 +23,9 @@ class Author:
 
 		
 class Communaute:
-	def __init__(self):
-		return
+	def __init__(self,auteur,profondeur):
+		self.auteur=auteur
+        self.profondeur=profondeur
+
 
 

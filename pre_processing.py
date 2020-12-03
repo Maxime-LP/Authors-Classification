@@ -146,7 +146,7 @@ def pre_processing(articles, references):
 	#les accents ne passent pas
 	df_p.to_csv(f'{nom_articles1}.csv', sep=',', encoding='utf_32')
 	df_a.to_csv(f'{nom_articles2}.csv', sep=',', encoding='utf_32')
-	df_a.to_csv(f'{nom_references}.csv', sep=',', encoding='utf_32')
+	df_a.to_csv(f'{nom_references}.csv', sep=',', encoding='utf_32') #essayer avec utf 16
 
 	print("> Fin du chargement des données.")
 	return 
