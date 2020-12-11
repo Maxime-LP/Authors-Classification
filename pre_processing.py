@@ -51,13 +51,13 @@ def pp_articles(chemin_articles):
 						if line[:9] == "Authors: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author += 1
-							tmp =re.split(' and | ,|,|, |& ',line[9:-1])
+							tmp =re.split(' and | | ,|,|, |& ',line[9:-1])
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
 						if line[:8] == "Author: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author +=  1
-							tmp = re.split(' and | ,|,|, |& ', line[8:-1])
+							tmp = re.split(' and | | ,|,|, |& ', line[8:-1])
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
 			progression_pct = progression / nb_files * 100
@@ -148,7 +148,11 @@ def pre_processing(articles, references):
 	#les accents ne passent pas
 	df_p.to_csv(f'{nom_articles1}.csv', sep=',', encoding='utf_32')
 	df_a.to_csv(f'{nom_articles2}.csv', sep=',', encoding='utf_32')
+<<<<<<< HEAD
 	df_ref.to_csv(f'{nom_references}.csv', sep=',', encoding='utf_32')
+=======
+	df_a.to_csv(f'{nom_references}.csv', sep=',', encoding='utf_32') #essayer avec utf 16
+>>>>>>> a3ae7e411ef540fbfa3d7656ac142b6233126b18
 
 	print("> Fin du chargement des données.")
 	return 
