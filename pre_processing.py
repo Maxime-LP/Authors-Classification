@@ -1,4 +1,4 @@
-from config import fp_articles, fp_ref, nom_articles1, nom_articles2, nom_references
+from config import fp_articles, fp_ref, article_auteurs, auteur_articles, article_ref
 import pandas as pd
 import numpy as np
 import re
@@ -51,13 +51,13 @@ def pp_articles(chemin_articles):
 						if line[:9] == "Authors: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author += 1
-							tmp =re.split(' and | | ,|,|, |& ',line[9:-1])
+							tmp =re.split(' and | ,|,|, |& ',line[9:-1])
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
 						if line[:8] == "Author: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author +=  1
-							tmp = re.split(' and | | ,|,|, |& ', line[8:-1])
+							tmp = re.split(' and | ,|,|, |& ', line[8:-1])
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
 			progression_pct = progression / nb_files * 100
@@ -122,6 +122,9 @@ def pre_processing(articles, references):
 	chemin_articles = fp_articles + articles
 	chemin_references = fp_ref + references
 
+	#On veut tester si le second chemin spécifié est accessible pour ne pas que le premier traitement se fasse et que le second renvoie une erreur après l'attente du premier
+	with open(f'{chemin_references}',"r") as f:
+		pass
 
 	# créations de dictionnaires contenant les données triées
 	dict_p, dict_a = pp_articles(chemin_articles)
@@ -143,12 +146,10 @@ def pre_processing(articles, references):
 	df_ref.set_index('id_article', inplace=True)
 	df_ref.sort_index(axis=0, inplace=True)
 
-
-	# écriture des DataFrame dans des fichier format csv
-	#les accents ne passent pas
-	df_p.to_csv(f'{nom_articles1}.csv', sep=',', encoding='utf_32')
-	df_a.to_csv(f'{nom_articles2}.csv', sep=',', encoding='utf_32')
-	df_ref.to_csv(f'{nom_references}.csv', sep=',', encoding='utf_32')
+	#Export
+	df_p.to_csv(f'{article_auteurs}.csv', sep=',', encoding='utf_32')
+	df_a.to_csv(f'{auteur_articles}.csv', sep=',', encoding='utf_32')
+	df_ref.to_csv(f'{article_ref}.csv', sep=',', encoding='utf_32') #essayer avec utf 16
 
 	print("> Fin du chargement des données.")
 	return 
