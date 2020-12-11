@@ -77,6 +77,7 @@ class Communaute:
 		return author_quoted
 	"""
 
-
+"""
 test=Auteur('C. Itzykson')
 print(test.cite(1))
+"""

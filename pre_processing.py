@@ -34,7 +34,7 @@ def pp_articles(chemin_articles):
 	# début du pre-processing
 	dict_p = defaultdict(list)
 	dict_a = defaultdict(list)
-
+	"""
 	progression=1
 
 	#construction du dict avec les id des articles en clés
@@ -52,38 +52,39 @@ def pp_articles(chemin_articles):
 							# récupère nom des auteurs dans une liste
 							nb_line_author += 1
 							tmp =re.split(' and | ,|,|, |& ',line[9:-1])
-							for author in tmp:
-								dict_a[author].append(tmp_paper)
-								dict_p[tmp_paper] = LatexNodes2Text().latex_to_text(author)
-							#dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
+							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
 						if line[:8] == "Author: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author +=  1
 							tmp = re.split(' and | ,|,|, |& ', line[8:-1])
-							for author in tmp:
-								dict_a[author].append(tmp_paper)
-								dict_p[tmp_paper] = LatexNodes2Text().latex_to_text(author)
-							#dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
+							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
 			progression_pct = progression / nb_files * 100
 			if progression_pct%10 == 0 : 
 				#os.system('cls')
 				print(f'progression : {progression_pct} %')
 			progression+=1
-
-	"""
+	
 	# construction du dict avec les auteurs en clés
+	"""
+	print(dict_p.items())
 	for paper, authors in dict_p.items():
 		for author in authors:
 			dict_a[author].append(paper)
 	"""
+	for paper in dict_p.keys():
+		authors=dict_p[paper]
+		for author in authors:
+			dict_a[author].append(paper)
+
+
 	# Informations sur le dossier articles
 	nb_articles = len(dict_p)
 	nb_auteurs = len(dict_a)
 	print(f'> Le dossier articles contient {nb_files} fichiers.')
 	print(f'> On y recence {nb_articles} publications et {nb_auteurs} auteurs.')
-
+	"""
 	return dict_p, dict_a
 
 ########### fin pp_articles ############
@@ -105,9 +106,7 @@ def pp_references(chemin_references):
 		# récupération et pre-processing du fichier
 		with open(f'{chemin_references}',"r") as f:
 			for line in f:
-				line = line[:-1].split(' ')
-				# on change le type des id: str vers int
-				line = [int(line[i]) for i in [0,1]]
+				line = line[:-1].split(' ') #On a une liste [id1,id2] où id1 et id2 sont des str
 				dict_ref[line[0]].append(line[1])
 				nb_relations += 1
 
@@ -136,28 +135,29 @@ def pre_processing(articles, references):
 	dict_p, dict_a = pp_articles(chemin_articles)
 	dict_ref = pp_references(chemin_references)
 
-	print(dict_p,dict_a,dict_ref)
-
 
 	# conversions en DataFrames et mis en forme de ces derniers
 		# pour df_p
-	df_p = pd.DataFrame({'id_article':dict_p.keys(), 'auteurs': dict_p.values()})
-	df_p.set_index('id_article', inplace=True)
+	df_p=pd.DataFrame(dict_p)
+	#df_p = pd.DataFrame({'id_article':dict_p.keys(), 'auteurs': dict_p.values()})
+	#df_p.set_index('id_article', inplace=True)
 	df_p.sort_index(axis=0, inplace=True)
 
 		# pour df_a
-	df_a = pd.DataFrame({'auteur':dict_a.keys(), 'id_articles':dict_a.values()})
-	df_a.set_index('auteur', inplace=True)
+	df_a=pd.DataFrame(dict_a)
+	#df_a = pd.DataFrame({'auteur':dict_a.keys(), 'id_articles':dict_a.values()})
+	#df_a.set_index('auteur', inplace=True)
 
 		# pour df_ref
-	df_ref = pd.DataFrame({'references':dict_ref.values(), 'id_article':dict_ref.keys()})
-	df_ref.set_index('id_article', inplace=True)
+	df_ref=pd.DataFrame(dict_ref,index=['id_article'])
+	#df_ref = pd.DataFrame({'references':dict_ref.values(), 'id_article':dict_ref.keys()})
+	#df_ref.set_index('id_article', inplace=True)
 	df_ref.sort_index(axis=0, inplace=True)
 
 	#Export
-	df_p.to_csv(f'{article_auteurs}.csv', sep=',', encoding='utf_32')
-	df_a.to_csv(f'{auteur_articles}.csv', sep=',', encoding='utf_32')
-	df_ref.to_csv(f'{article_ref}.csv', sep=',', encoding='utf_32') #essayer avec utf 16
+	df_p.to_csv(f'{article_auteurs}.csv',index='id_article', sep=',', encoding='utf_32')
+	df_a.to_csv(f'{auteur_articles}.csv',index='auteur', sep=',', encoding='utf_32')
+	df_ref.to_csv(f'{article_ref}.csv',index='id_article', sep=',', encoding='utf_32') #essayer avec utf 16
 
 	print("> Fin du chargement des données.")
 	return 
