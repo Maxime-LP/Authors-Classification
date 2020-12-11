@@ -3,10 +3,11 @@ import pandas as pd
 import re
 import os
 from collections import defaultdict
-from config import fp_articles, fp_ref, nom_articles1, nom_articles2, nom_references
+from config import fp_articles, fp_ref, article_auteurs, auteur_articles, article_ref
 
-data=pd.read_csv(f'{nom_articles1}',sep=',',usecols=['paper_id','Authors'],index_col='paper_id')
-ref=pd.read_csv(f'{nom_articles2}',sep=',',usecols=['paper_id','ref_id'],index_col='paper_id')
+data=pd.read_csv(f'{article_auteurs}',sep=',',usecols=['paper_id','Authors'],index_col='paper_id')
+data2=pd.read_csv(f'{auteur_articles}',sep=',',usecols=['paper_id','Authors'],index_col='paper_id')
+ref=pd.read_csv(f'{auteur_articles}',sep=',',usecols=['paper_id','ref_id'],index_col='paper_id')
 data.sort_values(by='paper_id',axis=0,inplace=True)
 ref.sort_values(by='paper_id',axis=0,inplace=True) 
 

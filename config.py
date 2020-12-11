@@ -6,6 +6,6 @@ fp_articles = r'C:\Users\lepau\OneDrive\Desktop'
 fp_ref = r'C:\Users\lepau\OneDrive\Desktop'
 
 # nom des fichiers créés après le pre-processing
-nom_articles1 = "resume_articles"
-nom_articles2 = "auteur_ref"
-nom_references = "reference_articles"
+article_auteurs = "resume_articles"
+auteur_articles = "auteur_ref"
+article_ref = "reference_articles"

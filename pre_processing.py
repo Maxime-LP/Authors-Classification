@@ -1,4 +1,4 @@
-from config import fp_articles, fp_ref, nom_articles1, nom_articles2, nom_references
+from config import fp_articles, fp_ref, article_auteurs, auteur_articles, article_ref
 import pandas as pd
 import numpy as np
 import re
@@ -23,7 +23,7 @@ def pp_articles(chemin_articles):
 	years = sorted(os.listdir(chemin_articles))
 	files = []
 	nb_files = 0
-	i = 0
+	i=0
 
 	for year in years:
 		files.append(os.listdir(f'{chemin_articles}/{year}'))
@@ -148,9 +148,9 @@ def pre_processing(articles, references):
 
 	# écriture des DataFrame dans des fichier format csv
 	#les accents ne passent pas
-	df_p.to_csv(f'{nom_articles1}.csv', sep=',', encoding='utf_32')
-	df_a.to_csv(f'{nom_articles2}.csv', sep=',', encoding='utf_32')
-	df_a.to_csv(f'{nom_references}.csv', sep=',', encoding='utf_32') #essayer avec utf 16
+	df_p.to_csv(f'{article_auteurs}.csv', sep=',', encoding='utf_32')
+	df_a.to_csv(f'{auteur_articles}.csv', sep=',', encoding='utf_32')
+	df_ref.to_csv(f'{article_ref}.csv', sep=',', encoding='utf_32') #essayer avec utf 16
 
 	print("> Fin du chargement des données.")
 	return 
