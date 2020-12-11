@@ -137,7 +137,7 @@ def pre_processing(articles, references):
 	df_p.sort_index(axis=0, inplace=True)
 
 		# pour df_a
-	df_a = pd.DataFrame({'auteur':dict_a.keys(), 'references':dict_a.values()})
+	df_a = pd.DataFrame({'auteur':dict_a.keys(), 'id_articles':dict_a.values()})
 	df_a.set_index('auteur', inplace=True)
 
 		# pour df_ref
