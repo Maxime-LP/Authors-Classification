@@ -31,6 +31,7 @@ def pp_articles(chemin_articles):
 		i += 1
 
 
+
 	# début du pre-processing
 	dict_p = defaultdict(list)
 	dict_a = defaultdict(list)
@@ -120,6 +121,9 @@ def pre_processing(articles, references):
 	chemin_articles = fp_articles + articles
 	chemin_references = fp_ref + references
 
+	#On veut tester si le second chemin spécifié est accessible pour ne pas que le premier traitement se fasse et que le second renvoie une erreur après l'attente du premier
+	with open(f'{chemin_references}',"r") as f:
+		pass
 
 	# créations de dictionnaires contenant les données triées
 	dict_p, dict_a = pp_articles(chemin_articles)
