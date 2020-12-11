@@ -34,7 +34,7 @@ def pp_articles(chemin_articles):
 	# début du pre-processing
 	dict_p = defaultdict(list)
 	dict_a = defaultdict(list)
-	"""
+	
 	progression=1
 
 	#construction du dict avec les id des articles en clés
@@ -84,7 +84,7 @@ def pp_articles(chemin_articles):
 	nb_auteurs = len(dict_a)
 	print(f'> Le dossier articles contient {nb_files} fichiers.')
 	print(f'> On y recence {nb_articles} publications et {nb_auteurs} auteurs.')
-	"""
+	
 	return dict_p, dict_a
 
 ########### fin pp_articles ############
@@ -138,26 +138,27 @@ def pre_processing(articles, references):
 
 	# conversions en DataFrames et mis en forme de ces derniers
 		# pour df_p
-	df_p=pd.DataFrame(dict_p)
-	#df_p = pd.DataFrame({'id_article':dict_p.keys(), 'auteurs': dict_p.values()})
-	#df_p.set_index('id_article', inplace=True)
+
+	df_p = pd.DataFrame({'id_article':dict_p.keys(), 'auteurs': dict_p.values()})
+	df_p.set_index('id_article', inplace=True)
 	df_p.sort_index(axis=0, inplace=True)
 
 		# pour df_a
-	df_a=pd.DataFrame(dict_a)
-	#df_a = pd.DataFrame({'auteur':dict_a.keys(), 'id_articles':dict_a.values()})
-	#df_a.set_index('auteur', inplace=True)
+	df_a = pd.DataFrame({'auteur':dict_a.keys(), 'id_articles':dict_a.values()})
+	df_a.set_index('auteur', inplace=True)
 
 		# pour df_ref
-	df_ref=pd.DataFrame(dict_ref,index=['id_article'])
-	#df_ref = pd.DataFrame({'references':dict_ref.values(), 'id_article':dict_ref.keys()})
-	#df_ref.set_index('id_article', inplace=True)
+	df_ref = pd.DataFrame({'references':dict_ref.values(), 'id_article':dict_ref.keys()})
+	df_ref.set_index('id_article', inplace=True)
 	df_ref.sort_index(axis=0, inplace=True)
 
-	#Export
+	#Ecriture dans des fichiers csv
 	df_p.to_csv(f'{article_auteurs}.csv',index='id_article', sep=',', encoding='utf_32')
 	df_a.to_csv(f'{auteur_articles}.csv',index='auteur', sep=',', encoding='utf_32')
 	df_ref.to_csv(f'{article_ref}.csv',index='id_article', sep=',', encoding='utf_32') #essayer avec utf 16
+
+
+	#PROBLEME : les valeurs des dictionnaires sont bien des listes, mais apres conversion en DF ce sont des str
 
 	print("> Fin du chargement des données.")
 	return 
