@@ -52,13 +52,19 @@ def pp_articles(chemin_articles):
 							# récupère nom des auteurs dans une liste
 							nb_line_author += 1
 							tmp =re.split(' and | ,|,|, |& ',line[9:-1])
-							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
+							for author in tmp:
+								dict_a[author].append(tmp_paper)
+								dict_p[tmp_paper] = LatexNodes2Text().latex_to_text(author)
+							#dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
 						if line[:8] == "Author: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author +=  1
 							tmp = re.split(' and | ,|,|, |& ', line[8:-1])
-							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
+							for author in tmp:
+								dict_a[author].append(tmp_paper)
+								dict_p[tmp_paper] = LatexNodes2Text().latex_to_text(author)
+							#dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
 			progression_pct = progression / nb_files * 100
 			if progression_pct%10 == 0 : 
@@ -66,12 +72,12 @@ def pp_articles(chemin_articles):
 				print(f'progression : {progression_pct} %')
 			progression+=1
 
-
+	"""
 	# construction du dict avec les auteurs en clés
 	for paper, authors in dict_p.items():
 		for author in authors:
 			dict_a[author].append(paper)
-
+	"""
 	# Informations sur le dossier articles
 	nb_articles = len(dict_p)
 	nb_auteurs = len(dict_a)
@@ -130,6 +136,8 @@ def pre_processing(articles, references):
 	dict_p, dict_a = pp_articles(chemin_articles)
 	dict_ref = pp_references(chemin_references)
 
+	print(dict_p,dict_a,dict_ref)
+
 
 	# conversions en DataFrames et mis en forme de ces derniers
 		# pour df_p
@@ -138,7 +146,7 @@ def pre_processing(articles, references):
 	df_p.sort_index(axis=0, inplace=True)
 
 		# pour df_a
-	df_a = pd.DataFrame({'auteur':dict_a.keys(), 'references':dict_a.values()})
+	df_a = pd.DataFrame({'auteur':dict_a.keys(), 'id_articles':dict_a.values()})
 	df_a.set_index('auteur', inplace=True)
 
 		# pour df_ref

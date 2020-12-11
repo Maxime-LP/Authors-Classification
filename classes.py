@@ -28,23 +28,26 @@ class Auteur: #OK
 	
 	def cite(self, N):
 		"""
-		fonction quote avec une profondeur N = 1
+		Retourne la liste des auteurs cités sous la forme (auteur,k) où k est la profondeur de la citation
 		"""
-		self = Auteur(N)
 		N = int(N)
-		author_quoted = []
+		authors_quoted = []
 		# on récupère les contributions de l'auteur
-		paper_quoted = data2[self.name]
-		
-		# pour chaque contribution, on regarde les papiers cités
-		# on récupère les auteurs de chaque papier
-		# et si un auteur n'est pas déjà dans les auteurs cités, on le rajoute à author_quoted
-		for paper in paper_quoted: 
-			for author in data2[paper]:
-				if not author in author_quoted:
-					author_quoted.append(author)
+		paper_quoted = data2.id_articles[self.name]
+		print(paper_quoted[1])
+		for k in range(1,N+1):
+			next_step_paper_quoted=[]
+			for paper in paper_quoted:
+				current_authors_list=data.auteurs[paper]
+				for current_author in current_authors_list:
+					if current_author not in authors_quoted :
+						authors_quoted.append(current_author)
+					next_step_paper_quoted.append(current_author)
+
+			paper_quoted=next_step_paper_quoted
+			
 					
-		return author_quoted
+		return authors_quoted
 
 
 class Communaute:
@@ -73,3 +76,7 @@ class Communaute:
 		print(author_quoted)
 		return author_quoted
 	"""
+
+
+test=Auteur('C. Itzykson')
+print(test.cite(1))
