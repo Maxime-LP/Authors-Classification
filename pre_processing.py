@@ -1,4 +1,4 @@
-from config import fp_articles, fp_ref, article_auteurs, auteur_articles, article_ref
+from config import fp_articles, fp_ref, nom_articles1, nom_articles2, nom_references
 import pandas as pd
 import numpy as np
 import re
@@ -23,13 +23,12 @@ def pp_articles(chemin_articles):
 	years = sorted(os.listdir(chemin_articles))
 	files = []
 	nb_files = 0
-	i=0
+	i = 0
 
 	for year in years:
 		files.append(os.listdir(f'{chemin_articles}/{year}'))
 		nb_files += len(files[i])
 		i += 1
-
 
 
 	# début du pre-processing
@@ -52,17 +51,19 @@ def pp_articles(chemin_articles):
 						if line[:9] == "Authors: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author += 1
-							tmp =re.split(' and | ,|,|, |& ',line[9:-1])
+							tmp =re.split(' and | | ,|,|, |& ',line[9:-1])
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
 						if line[:8] == "Author: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author +=  1
-							tmp = re.split(' and | ,|,|, |& ', line[8:-1])
+							tmp = re.split(' and | | ,|,|, |& ', line[8:-1])
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
-			progression_pct=progression/nb_files*100
-			if progression_pct%10==0 : os.system('cls');print(f'progression : {progression_pct} %')
+			progression_pct = progression / nb_files * 100
+			if progression_pct%10 == 0 : 
+				#os.system('cls')
+				print(f'progression : {progression_pct} %')
 			progression+=1
 
 
@@ -121,9 +122,6 @@ def pre_processing(articles, references):
 	chemin_articles = fp_articles + articles
 	chemin_references = fp_ref + references
 
-	#On veut tester si le second chemin spécifié est accessible pour ne pas que le premier traitement se fasse et que le second renvoie une erreur après l'attente du premier
-	with open(f'{chemin_references}',"r") as f:
-		pass
 
 	# créations de dictionnaires contenant les données triées
 	dict_p, dict_a = pp_articles(chemin_articles)
@@ -137,7 +135,7 @@ def pre_processing(articles, references):
 	df_p.sort_index(axis=0, inplace=True)
 
 		# pour df_a
-	df_a = pd.DataFrame({'auteur':dict_a.keys(), 'id_articles':dict_a.values()})
+	df_a = pd.DataFrame({'auteur':dict_a.keys(), 'references':dict_a.values()})
 	df_a.set_index('auteur', inplace=True)
 
 		# pour df_ref
@@ -148,9 +146,13 @@ def pre_processing(articles, references):
 
 	# écriture des DataFrame dans des fichier format csv
 	#les accents ne passent pas
-	df_p.to_csv(f'{article_auteurs}.csv', sep=',', encoding='utf_32')
-	df_a.to_csv(f'{auteur_articles}.csv', sep=',', encoding='utf_32')
-	df_ref.to_csv(f'{article_ref}.csv', sep=',', encoding='utf_32') #essayer avec utf 16
+	df_p.to_csv(f'{nom_articles1}.csv', sep=',', encoding='utf_32')
+	df_a.to_csv(f'{nom_articles2}.csv', sep=',', encoding='utf_32')
+<<<<<<< HEAD
+	df_ref.to_csv(f'{nom_references}.csv', sep=',', encoding='utf_32')
+=======
+	df_a.to_csv(f'{nom_references}.csv', sep=',', encoding='utf_32') #essayer avec utf 16
+>>>>>>> a3ae7e411ef540fbfa3d7656ac142b6233126b18
 
 	print("> Fin du chargement des données.")
 	return 
