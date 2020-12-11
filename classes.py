@@ -5,9 +5,9 @@ import os
 from collections import defaultdict
 from config import fp_articles, fp_ref, article_auteurs, auteur_articles, article_ref
 
-data=pd.read_csv(f'{article_auteurs}.csv',sep=',',encoding='utf-32',usecols=['id_article','auteurs'],index_col='id_article')
-data2=pd.read_csv(f'{auteur_articles}.csv',sep=',',encoding='utf-32',usecols=['auteur','references'],index_col='auteur')
-ref=pd.read_csv(f'{article_ref}.csv',sep=',',encoding='utf-32',usecols=['id_article','references'],index_col='id_article')
+data=pd.read_csv(f'{article_auteurs}.csv',sep=',',encoding='utf-32',usecols=['id_article','auteurs'],index_col='id_article') #DF Article Auteurs
+data2=pd.read_csv(f'{auteur_articles}.csv',sep=',',encoding='utf-32',usecols=['auteur','id_articles'],index_col='auteur')	#DF Auteur Articles
+ref=pd.read_csv(f'{article_ref}.csv',sep=',',encoding='utf-32',usecols=['id_article','references'],index_col='id_article')	#DF Article ref
 
 class Article: #OK
 	"""
@@ -19,13 +19,13 @@ class Article: #OK
 		self.ref=ref.references[self.id]
 		self.auteurs=data.auteurs[self.id]
 
-class Auteur:
+class Auteur: #OK
+	"""
+	Un auteur = un nom + une liste d'article
+	"""
 	def __init__(self,name):
 		self.name=name
-		self.list_articles=data.query("@name in data.auteurs")
-		print(data.auteurs)
-
-
+		self.liste_articles=data2.id_articles[f'{self.name}']
 	
 class Communaute:
 
@@ -33,6 +33,7 @@ class Communaute:
 		self.auteur=auteur
 		self.profondeur=profondeur
 
+	def __str__(self):
+		pass
 
-Itzy=Auteur('C. Itzykson')
-print(Itzy.name,Itzy.list_articles) 
+print(Auteur('C. Itzykson').name)
