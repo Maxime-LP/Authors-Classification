@@ -60,8 +60,10 @@ def pp_articles(chemin_articles):
 							tmp = re.split(' and | ,|,|, |& ', line[8:-1])
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
-			progression_pct=progression/nb_files*100
-			if progression_pct%10==0 : os.system('cls');print(f'progression : {progression_pct} %')
+			progression_pct = progression / nb_files * 100
+			if progression_pct%10 == 0 : 
+				#os.system('cls')
+				print(f'progression : {progression_pct} %')
 			progression+=1
 
 
@@ -146,7 +148,7 @@ def pre_processing(articles, references):
 	#les accents ne passent pas
 	df_p.to_csv(f'{nom_articles1}.csv', sep=',', encoding='utf_32')
 	df_a.to_csv(f'{nom_articles2}.csv', sep=',', encoding='utf_32')
-	df_a.to_csv(f'{nom_references}.csv', sep=',', encoding='utf_32')
+	df_ref.to_csv(f'{nom_references}.csv', sep=',', encoding='utf_32')
 
 	print("> Fin du chargement des données.")
 	return 

@@ -8,7 +8,7 @@ articles et d'un fichier contenant les références des articles.
 
 import sys
 from pre_processing import pre_processing
-
+from classes import Article, Auteur, 
 
 def aide():
 	print('> Liste des commandes:')
@@ -21,7 +21,8 @@ if __name__ == "__main__":
 	# commandes disponible de l'application 
 	dispatcher = {
 		'init': pre_processing,
-		'help': aide
+		'help': aide,
+		'cite' : Article.cite
 		}
 
 
