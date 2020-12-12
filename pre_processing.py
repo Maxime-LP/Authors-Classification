@@ -153,12 +153,12 @@ def pre_processing(articles, references):
 	df_ref.sort_index(axis=0, inplace=True)
 
 	#Ecriture dans des fichiers csv
-	df_p.to_csv(f'{article_auteurs}.csv',index='id_article', sep=',', encoding='utf_32')
-	df_a.to_csv(f'{auteur_articles}.csv',index='auteur', sep=',', encoding='utf_32')
-	df_ref.to_csv(f'{article_ref}.csv',index='id_article', sep=',', encoding='utf_32') #essayer avec utf 16
+	df_p.to_csv(f'{article_auteurs}.csv',index='id_article', encoding='utf_32')
+	df_a.to_csv(f'{auteur_articles}.csv',index='auteur', encoding='utf_32')
+	df_ref.to_csv(f'{article_ref}.csv',index='id_article', encoding='utf_32') #essayer avec utf 16
 
 
-	#PROBLEME : les valeurs des dictionnaires sont bien des listes, mais apres conversion en DF ce sont des str
+	#PROBLEME : les valeurs des DF sont bien des listes, mais apres export dans des csv ce sont des str !
 
 	print("> Fin du chargement des données.")
 	return 
