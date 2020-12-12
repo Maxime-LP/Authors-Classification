@@ -34,7 +34,7 @@ def pp_articles(chemin_articles):
 	# début du pre-processing
 	dict_p = defaultdict(list)
 	dict_a = defaultdict(list)
-	
+	"""
 	progression=1
 
 	#construction du dict avec les id des articles en clés
@@ -84,7 +84,7 @@ def pp_articles(chemin_articles):
 	nb_auteurs = len(dict_a)
 	print(f'> Le dossier articles contient {nb_files} fichiers.')
 	print(f'> On y recence {nb_articles} publications et {nb_auteurs} auteurs.')
-	
+	"""
 	return dict_p, dict_a
 
 ########### fin pp_articles ############
@@ -155,7 +155,7 @@ def pre_processing(articles, references):
 	#Ecriture dans des fichiers csv
 	df_p.to_csv(f'{article_auteurs}.csv',index='id_article', encoding='utf_32')
 	df_a.to_csv(f'{auteur_articles}.csv',index='auteur', encoding='utf_32')
-	df_ref.to_csv(f'{article_ref}.csv',index='id_article', encoding='utf_32') #essayer avec utf 16
+	df_ref.to_csv(f'{article_ref}.csv')
 
 
 	#PROBLEME : les valeurs des DF sont bien des listes, mais apres export dans des csv ce sont des str !

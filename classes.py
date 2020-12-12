@@ -6,7 +6,7 @@ from config import fp_articles, fp_ref, article_auteurs, auteur_articles, articl
 
 data=pd.read_csv(f'{article_auteurs}.csv',sep=',',encoding='utf-32',usecols=['id_article','auteurs'],index_col='id_article') #DF Article Auteurs
 data2=pd.read_csv(f'{auteur_articles}.csv',sep=',',encoding='utf-32',usecols=['auteur','id_articles'],index_col='auteur')	#DF Auteur Articles
-ref=pd.read_csv(f'{article_ref}.csv',sep=',',encoding='utf-32',usecols=['id_article','references'],index_col='id_article')	#DF Article ref
+ref=pd.read_csv(f'{article_ref}.csv',sep=',',usecols=['id_article','references'],index_col='id_article')	#DF Article ref
 
 class Article: #OK
 	"""
