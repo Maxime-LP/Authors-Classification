@@ -67,12 +67,11 @@ def pp_articles(chemin_articles):
 			progression+=1
 	
 	# construction du dict avec les auteurs en clés
-	"""
-	print(dict_p.items())
+	'''
 	for paper, authors in dict_p.items():
 		for author in authors:
 			dict_a[author].append(paper)
-	"""
+	'''
 	for paper in dict_p.keys():
 		authors=dict_p[paper]
 		for author in authors:
