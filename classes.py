@@ -38,6 +38,7 @@ class Auteur: #OK
 		next_step_papers = re.split(", ",next_step_papers[1:-1]) #En attente de correction du problème des .csv en fin de processing
 		
 		for k in range(1,N+1):
+			print(f"{k}/{N}")
 			written_papers=next_step_papers
 			next_step_papers=[]
 
@@ -46,10 +47,11 @@ class Auteur: #OK
 				#pour chaque article écrit, on récupère la liste des articles cités, puis on remonte les auteurs
 				if paper in index_list:
 					quoted_papers=re.split("', '",ref.references[paper][2:-2])
-					quoted_authors_tmp=[re.split("', '", data.auteurs[int(paper_tmp)][2:-2]) for paper_tmp in quoted_papers]
-					#On ajoute les papiers cités à la liste des papiers à traiter à la prochaine itération
-					for paper_to_add in quoted_papers:
-						next_step_papers.append(paper_to_add)
+					quoted_authors_tmp=[]
+					for paper_tmp in quoted_papers:
+						quoted_authors_tmp+=re.split("', '", data.auteurs[int(paper_tmp)][2:-2])
+						#On en profite pour ajouter les papiers cités à la liste des papiers à traiter à la prochaine itération
+						next_step_papers.append(paper_tmp)
 				else:
 					quoted_authors_tmp=[]
 
@@ -88,5 +90,5 @@ class Communaute:
 	"""
 
 
-test=Auteur('E. Sezgin')
+test=Auteur('C. Itzykson')
 print(test.cite(4))
