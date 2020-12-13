@@ -37,6 +37,7 @@ class Auteur: #OK
 		print(paper_quoted[1])
 		for k in range(1,N+1):
 			next_step_paper_quoted=[]
+			paper_quoted=re.split(", ",paper_quoted[1:-1]) #En attente de correction du problème des .csv en fin de processing
 			for paper in paper_quoted:
 				current_authors_list=data.auteurs[paper]
 				for current_author in current_authors_list:
@@ -77,7 +78,6 @@ class Communaute:
 		return author_quoted
 	"""
 
-"""
+
 test=Auteur('C. Itzykson')
 print(test.cite(1))
-"""
