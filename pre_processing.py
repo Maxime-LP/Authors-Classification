@@ -51,14 +51,14 @@ def pp_articles(chemin_articles):
 						if line[:9] == "Authors: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author += 1
-							tmp =re.split(' and | nd | ,|, |,|& ',line[9:-1])
+							tmp =re.split(', and | and | nd | ,|, |,|& ',line[9:-1])
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 							
 
 						if line[:8] == "Author: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author +=  1
-							tmp = re.split(' and | nd | ,|, |,|& ', line[8:-1])
+							tmp = re.split(', and | and | nd | ,|, |,|& ', line[8:-1])
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
 
 			progression_pct = progression / nb_files * 100

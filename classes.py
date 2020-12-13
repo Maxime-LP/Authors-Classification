@@ -93,5 +93,5 @@ class Communaute:
 	"""
 
 
-test=Auteur(' R.Giachetti')
+test=Auteur('R.Giachetti')
 print(test.cite(4))
