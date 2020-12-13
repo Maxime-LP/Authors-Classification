@@ -34,6 +34,7 @@ class Auteur: #OK
 		index_list=list(ref.index.values)
 		N = int(N)
 		quoted_authors = []
+		quoted_authors_with_k = []
 		# on récupère les contributions de l'auteur
 		next_step_papers = data2.id_articles[self.name]
 		next_step_papers = re.split(", ",next_step_papers[1:-1]) #En attente de correction du problème des .csv en fin de processing
@@ -41,7 +42,6 @@ class Auteur: #OK
 		for k in range(1,N+1):
 			print(f"{k}/{N}")
 			written_papers=next_step_papers
-			print(written_papers)
 			next_step_papers=[]
 
 			for paper in written_papers:
@@ -58,10 +58,11 @@ class Auteur: #OK
 					quoted_authors_tmp=[]
 
 				for author in quoted_authors_tmp:
-					if author not in quoted_authors and author!=self.name:
-						quoted_authors.append((author,k))
+					if author not in quoted_authors and author!=self.name and author!="":
+						quoted_authors.append(author)
+						quoted_authors_with_k.append((author,k))
 
-		return quoted_authors
+		return quoted_authors_with_k
 
 
 class Communaute:
