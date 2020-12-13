@@ -13,7 +13,7 @@ if sys.argv[1]!='init': #Pour eviter d'essayer d'importer les fichiers csv lorsq
 
 def aide():
 	print('> Liste des commandes:')
-	print('init, cite')
+	print('init')
 	print('> Utiliser une commande:')
 	print('./communaute.py maCommande argument1 argument2')
 
