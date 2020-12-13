@@ -30,25 +30,34 @@ class Auteur: #OK
 		"""
 		Retourne la liste des auteurs cités sous la forme (auteur,k) où k est la profondeur de la citation
 		"""
+		index_list=list(ref.index.values)
 		N = int(N)
-		authors_quoted = []
+		quoted_authors = []
 		# on récupère les contributions de l'auteur
-		paper_quoted = data2.id_articles[self.name]
-		print(paper_quoted[1])
+		next_step_papers = data2.id_articles[self.name]
+		next_step_papers = re.split(", ",next_step_papers[1:-1]) #En attente de correction du problème des .csv en fin de processing
+		
 		for k in range(1,N+1):
-			next_step_paper_quoted=[]
-			paper_quoted=re.split(", ",paper_quoted[1:-1]) #En attente de correction du problème des .csv en fin de processing
-			for paper in paper_quoted:
-				current_authors_list=data.auteurs[paper]
-				for current_author in current_authors_list:
-					if current_author not in authors_quoted :
-						authors_quoted.append(current_author)
-					next_step_paper_quoted.append(current_author)
+			written_papers=next_step_papers
+			next_step_papers=[]
 
-			paper_quoted=next_step_paper_quoted
-			
-					
-		return authors_quoted
+			for paper in written_papers:
+				paper=int(paper)
+				#pour chaque article écrit, on récupère la liste des articles cités, puis on remonte les auteurs
+				if paper in index_list:
+					quoted_papers=re.split("', '",ref.references[paper][2:-2])
+					quoted_authors_tmp=[re.split("', '", data.auteurs[int(paper_tmp)][2:-2]) for paper_tmp in quoted_papers]
+					#On ajoute les papiers cités à la liste des papiers à traiter à la prochaine itération
+					for paper_to_add in quoted_papers:
+						next_step_papers.append(paper_to_add)
+				else:
+					quoted_authors_tmp=[]
+
+				for author in quoted_authors_tmp:
+					if author not in quoted_authors and author!=self.name:
+						quoted_authors.append((author,k))
+
+		return quoted_authors
 
 
 class Communaute:
@@ -79,5 +88,5 @@ class Communaute:
 	"""
 
 
-test=Auteur('C. Itzykson')
-print(test.cite(1))
+test=Auteur('E. Sezgin')
+print(test.cite(4))
