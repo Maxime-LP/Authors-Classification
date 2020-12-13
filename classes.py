@@ -29,6 +29,7 @@ class Auteur: #OK
 	def cite(self, N):
 		"""
 		Retourne la liste des auteurs cités sous la forme (auteur,k) où k est la profondeur de la citation
+		index_list est la liste des index du DF ref, on l'utilise pour savoir si un article dépend d'un autre ou non (si son id n'est pas dans index_list, alors il ne cite aucun article)
 		"""
 		index_list=list(ref.index.values)
 		N = int(N)
@@ -90,5 +91,5 @@ class Communaute:
 	"""
 
 
-test=Auteur('C. Itzykson')
+test=Auteur('Robbert Dijkgraaf')
 print(test.cite(4))
