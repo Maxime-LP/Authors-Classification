@@ -59,6 +59,7 @@ def pp_articles(chemin_articles):
 							nb_line_author +=  1
 							tmp = re.split(' and | ,|,|, |& ', line[8:-1])
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author) for author in tmp]
+						### Certains auteurs ont un espace au début de leur nom, à corriger !
 
 			progression_pct = progression / nb_files * 100
 			if progression_pct%10 == 0 : 

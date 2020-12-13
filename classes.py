@@ -41,6 +41,7 @@ class Auteur: #OK
 		for k in range(1,N+1):
 			print(f"{k}/{N}")
 			written_papers=next_step_papers
+			print(written_papers)
 			next_step_papers=[]
 
 			for paper in written_papers:
@@ -91,5 +92,5 @@ class Communaute:
 	"""
 
 
-test=Auteur('R.Giachetti')
+test=Auteur(' R.Giachetti')
 print(test.cite(4))
