@@ -91,5 +91,5 @@ class Communaute:
 	"""
 
 
-test=Auteur('Robbert Dijkgraaf')
+test=Auteur('R.Giachetti')
 print(test.cite(4))
