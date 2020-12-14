@@ -26,10 +26,11 @@ class Auteur: #OK
 		self.name=name
 		self.liste_articles=data2.id_articles[f'{self.name}']
 	
-	def cite(self, N):
+	def cite(self, N,prof=False):
 		"""
 		Retourne la liste des auteurs cités sous la forme (auteur,k) où k est la profondeur de la citation
 		index_list est la liste des index du DF ref, on l'utilise pour savoir si un article dépend d'un autre ou non (si son id n'est pas dans index_list, alors il ne cite aucun article)
+		l'argument prof détermine si on veut avoir les profondeurs des citations
 		"""
 		index_list=list(ref.index.values)
 		N = int(N)
@@ -61,8 +62,10 @@ class Auteur: #OK
 					if author not in quoted_authors and author!=self.name and author!="":
 						quoted_authors.append(author)
 						quoted_authors_with_k.append((author,k))
-
-		return quoted_authors_with_k
+		if prof:
+			return quoted_authors_with_k
+		else:
+			return quoted_authors
 
 
 class Communaute:
