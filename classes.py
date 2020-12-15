@@ -26,16 +26,16 @@ class Auteur: #OK
 		self.name=name
 		self.liste_articles=data2.id_articles[f'{self.name}']
 	
-	def cite(self, N,prof=False):
+	def cite(self, N,influence=False):
 		"""
 		Retourne la liste des auteurs cités sous la forme (auteur,k) où k est la profondeur de la citation
 		index_list est la liste des index du DF ref, on l'utilise pour savoir si un article dépend d'un autre ou non (si son id n'est pas dans index_list, alors il ne cite aucun article)
-		l'argument prof détermine si on veut avoir les profondeurs des citations
+		l'argument influence détermine si on veut avoir les influences des auteurs
 		"""
 		index_list=list(ref.index.values)
 		N = int(N)
 		quoted_authors = []
-		quoted_authors_with_k = []
+		quoted_authors_influence = {}
 		# on récupère les contributions de l'auteur
 		next_step_papers = data2.id_articles[self.name]
 		next_step_papers = re.split(", ",next_step_papers[1:-1]) #En attente de correction du problème des .csv en fin de processing
@@ -59,11 +59,14 @@ class Auteur: #OK
 					quoted_authors_tmp=[]
 
 				for author in quoted_authors_tmp:
-					if author not in quoted_authors and author!=self.name and author!="":
-						quoted_authors.append(author)
-						quoted_authors_with_k.append((author,k))
-		if prof:
-			return quoted_authors_with_k
+					if author!=self.name and author!="":
+						if author not in quoted_authors:
+							quoted_authors.append(author)
+							quoted_authors_influence[author]=1/k
+						else:
+							quoted_authors_influence[author]+=1/k
+		if influence:
+			return quoted_authors_influence
 		else:
 			return quoted_authors
 
@@ -97,4 +100,4 @@ class Communaute:
 
 
 test=Auteur('R.Giachetti')
-print(test.cite(4))
+print(test.cite(4,influence=True))
