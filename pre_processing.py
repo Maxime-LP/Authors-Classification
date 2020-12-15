@@ -53,40 +53,39 @@ def pp_articles(chemin_articles):
 							nb_line_author += 1
 							line_tmp=line[9:-1]
 							#Suppression des noms d'universités
-							k=0
-							length=len(line_tmp)
-							while k<length:
-								while line_tmp[k]!='(' and k<length-1:
-									print(k,length)
-									k+=1
-								if k<length-1:
-									i=0
-									while line_tmp[i]!=')' and i<length-1:
-										i+=1
-									line_tmp=line_tmp[0:k-1]+line_tmp[k+i+1:-1]
-								length-=i
+							while True:
+								try:
+									index1=line_tmp.index('(')
+									index2=line_tmp.index(')')
+									if index2==len(line_tmp)-1:
+										line_tmp=line_tmp[0:index1]
+									else:
+										line_tmp=line_tmp[0:index1] + line_tmp[index2+1:-1] + line_tmp[-1]
+								except ValueError:
+									break
 
-							tmp = re.split(', and | and | nd | , | ,|, |,|& ',line_tmp)
-							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in tmp]
+							line_tmp = re.split(', and | and | nd | , | ,|, |,|& ',line_tmp)
+							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
 							
 
 						if line[:8] == "Author: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author +=  1
 							line_tmp=line[8:-1]
-							"""
 							#Suppression des noms d'universités
-							k=0
-							while line_tmp[k]!='(':
-								k+=1
-							if k<len(line_tmp):
-								i=0
-								while line_tmp[i]!=')':
-									i+=1
-								line_tmp=line_tmp[0:k-1]+line_tmp[k+i+1::]
-							"""
-							tmp = re.split(', and | and | nd | , | ,|, |,|& ', line_tmp)
-							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in tmp]
+							while True:
+								try:
+									index1=line_tmp.index('(')
+									index2=line_tmp.index(')')
+									if index2==len(line_tmp)-1:
+										line_tmp=line_tmp[0:index1]
+									else:
+										line_tmp=line_tmp[0:index1] + line_tmp[index2+1:-1] + line_tmp[-1]
+								except ValueError:
+									break
+							
+							line_tmp = re.split(', and | and | nd | , | ,|, |,|& ', line_tmp)
+							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
 
 			progression_pct = progression / nb_files * 100
 			if progression_pct%10 == 0 : 
