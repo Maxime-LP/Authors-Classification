@@ -38,5 +38,5 @@ if __name__ == "__main__":
 			dispatcher[sys.argv[1]](sys.argv[2], sys.argv[3])
 	except KeyError:
 		print('Commande invalide. Pour plus d\'informations: ./communaute help')
-	except IndexError:
+	#except IndexError:
 		print('Argument(s) invalide(s).')
