@@ -41,8 +41,8 @@ def pp_articles(chemin_articles):
 	for year, file_by_year in zip(years, files):
 		for file in sorted(file_by_year):
 			with open(f"{chemin_articles}/{year}/{file}","r",encoding="utf-8") as f:
-				nb_line_author = 0 # dans le cas ou il y a 2 lignes Auteur(s) => 9201039.abs
 				for line in f:
+					nb_line_author = 0 # dans le cas ou il y a 2 lignes Auteur(s) => 9201039.abs
 					if nb_line_author < 1:
 						if line[:7]=="Paper: ":
 							# récupère id de l'article
