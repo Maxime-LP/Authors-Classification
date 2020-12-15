@@ -65,6 +65,7 @@ def pp_articles(chemin_articles):
 									break
 
 							line_tmp = re.split(', and | and | nd | , | ,|, |,|& ',line_tmp)
+							#On supprime aussi les espaces restant dans les noms d'auteurs afin d'uniformiser le format 
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
 							
 
