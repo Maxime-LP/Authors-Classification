@@ -7,9 +7,11 @@ articles et d'un fichier contenant les références des articles.
 """
 
 import sys
+import numpy as np
 from pre_processing import pre_processing
 if sys.argv[1]!='init': #Pour eviter d'essayer d'importer les fichiers csv lorsqu'on a pas encore init
-	from classes import Article, Auteur
+	from classes import Article, Auteur, Communaute
+
 
 def help():
 	print('> Liste des commandes:')
@@ -40,8 +42,12 @@ if __name__ == "__main__":
 		elif sys.argv[1] == 'cite':
 			Auteur(sys.argv[2]).cite(sys.argv[3])
 
+		elif sys.argv[1] == 'communaute':
+			Communaute(sys.argv[2]).graph(sys.argv[3])
+
 		else:
-			dispatcher[sys.argv[1]](sys.argv[2], sys.argv[3])
+			print('Saisie non-valide. Tapez \'./communaute help\' pour plus d\'informations.')
+			#dispatcher[sys.argv[1]](sys.argv[2], sys.argv[3])
 
 	except KeyError:
 		print('Commande invalide. Pour plus d\'informations: ./communaute help')

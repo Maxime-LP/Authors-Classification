@@ -8,6 +8,13 @@ from time import time
 from collections import defaultdict
 from pylatexenc.latex2text import LatexNodes2Text
 
+########### début adj_mat ############
+
+def adj_mat(dico):
+	return
+
+########### fin adj_mat ############
+
 
 # pp := pre-processing
 
@@ -165,7 +172,6 @@ def pre_processing(articles, references):
 			# créations de dictionnaires contenant les données triées
 			dict_p, dict_a = pp_articles(chemin_articles)
 			dict_ref = pp_references(chemin_references)
-
 
 			# conversions en DataFrames et mise en forme de ces derniers
 				# pour df_p
