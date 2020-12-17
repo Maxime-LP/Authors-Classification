@@ -11,7 +11,7 @@ from pre_processing import pre_processing
 if sys.argv[1]!='init': #Pour eviter d'essayer d'importer les fichiers csv lorsqu'on a pas encore init
 	from classes import Article, Auteur
 
-def aide():
+def help():
 	print('> Liste des commandes:')
 	print('init')
 	print('> Utiliser une commande:')
@@ -19,24 +19,31 @@ def aide():
 
 if __name__ == "__main__":
 
-	# commandes disponible de l'application 
-	dispatcher = {
-		'init': pre_processing,
-		'help': aide,
-		}
+	"""# commandes disponible de l'application 
+				dispatcher = {
+					'init': pre_processing,		# non-utilisé
+					'help': aide,
+					}"""
 
 
 	# selection d'une commande		
 	try:
+		if sys.argv[1] == 'test':
+			test_df()
+
 		if sys.argv[1] == 'help':
-			dispatcher[sys.argv[1]]()
-		elif (sys.argv[1][:5] == 'help_') & (sys.argv[1][5:] in list(dispatcher.keys())):
-			help(dispatcher[sys.argv[1][5:]])
+			aide()
+
+		elif sys.argv[1] == 'init':
+			pre_processing(sys.argv[2], sys.argv[3])
+
 		elif sys.argv[1] == 'cite':
 			Auteur(sys.argv[2]).cite(sys.argv[3])
+
 		else:
 			dispatcher[sys.argv[1]](sys.argv[2], sys.argv[3])
+
 	except KeyError:
 		print('Commande invalide. Pour plus d\'informations: ./communaute help')
-	#except IndexError:
+	except IndexError:
 		print('Argument(s) invalide(s).')

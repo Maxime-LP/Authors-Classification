@@ -21,8 +21,9 @@ class Article: #OK
 
 class Auteur: #OK
 	"""
-	Un auteur = un nom + une liste d'article
+	Les éléments de la classe auteur ont deux attributs: name et liste_articles
 	"""
+
 	def __init__(self,name):
 		self.name=name
 		self.liste_articles=data2.id_articles[f'{self.name}']
@@ -39,7 +40,7 @@ class Auteur: #OK
 		next_step_papers = re.split(", ",next_step_papers[1:-1]) #En attente de correction du problème des .csv en fin de processing
 		
 		for k in range(1,N+1):
-			print(f"{k}/{N}")
+			#print(f"{k}/{N}")
 			written_papers = next_step_papers
 			next_step_papers = []
 
@@ -68,6 +69,7 @@ class Auteur: #OK
 		return quoted_authors
 
 
+
 class Communaute:
 
 	def __init__(self,auteur,profondeur):
@@ -77,7 +79,7 @@ class Communaute:
 	def __str__(self):
 		return f"La communauté autour de {self.auteur} ..."
 
-time0=time.time()
+"""time0=time.time()
 test=Auteur('N.Warner')
 print(test.cite(4))
-print(time.time()-time0)
+print(time.time()-time0)"""

@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import re
 import os
+import platform
 from time import time
 from collections import defaultdict
 from pylatexenc.latex2text import LatexNodes2Text
@@ -64,8 +65,9 @@ def pp_articles(chemin_articles):
 								except ValueError:
 									break
 
+							# On crée une liste avec les noms d'auteurs en séparant avec certaines chaînes de caractères
 							line_tmp = re.split(', and | and | nd | , | ,|, |,|& ',line_tmp)
-							#On supprime aussi les espaces restant dans les noms d'auteurs afin d'uniformiser le format 
+							# On supprime aussi les espaces restant dans les noms d'auteurs et traduit les caractères spéciaux écrit en LaTeX
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
 							
 
@@ -84,22 +86,22 @@ def pp_articles(chemin_articles):
 										line_tmp=line_tmp[0:index1] + line_tmp[index2+1:-1] + line_tmp[-1]
 								except ValueError:
 									break
-							
+
+							# pareil que plus haut
 							line_tmp = re.split(', and | and | nd | , | ,|, |,|& ', line_tmp)
 							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
 
+			# affichage de la progression du traitement 
 			progression_pct = progression / nb_files * 100
 			if progression_pct%10 == 0 : 
-				#os.system('cls')
+				if platform.system() == "Windows":
+					os.system("cls")
+				elif platform.system() == "Linux":
+					os.system("clear")
 				print(f'progression : {progression_pct} %')
 			progression+=1
 	
-	# construction du dict avec les auteurs en clés
-	'''
-	for paper, authors in dict_p.items():
-		for author in authors:
-			dict_a[author].append(paper)
-	'''
+	# Construction du dict avec les auteurs en clés
 	for paper in dict_p.keys():
 		authors=dict_p[paper]
 		for author in authors:
@@ -133,7 +135,7 @@ def pp_references(chemin_references):
 		# récupération et pre-processing du fichier
 		with open(f'{chemin_references}',"r") as f:
 			for line in f:
-				line = line[:-1].split(' ') #On a une liste [id1,id2] où id1 et id2 sont des str
+				line = line[:-1].split(' ') #On crée une liste [id1,id2] où id1 et id2 sont de type str
 				dict_ref[line[0]].append(line[1])
 				nb_relations += 1
 
@@ -146,6 +148,8 @@ def pp_references(chemin_references):
 
 
 
+########### début pre_processing ############
+
 def pre_processing(articles, references):
 	'''
 	Pre-processing d'un nouveau jeu'de données pour l'application.
@@ -154,38 +158,44 @@ def pre_processing(articles, references):
 	chemin_articles = fp_articles + articles
 	chemin_references = fp_ref + references
 
-	#On veut tester si le second chemin spécifié est accessible pour ne pas que le premier traitement se fasse et que le second renvoie une erreur après l'attente du premier
-	with open(f'{chemin_references}',"r") as f:
-		pass
 
-	# créations de dictionnaires contenant les données triées
-	dict_p, dict_a = pp_articles(chemin_articles)
-	dict_ref = pp_references(chemin_references)
+	if os.path.exists(chemin_articles): # Test d'acces au fichier articles
+		if os.path.exists(chemin_references): # Test d'acces au fichier references
 
-
-	# conversions en DataFrames et mis en forme de ces derniers
-		# pour df_p
-
-	df_p = pd.DataFrame({'id_article':dict_p.keys(), 'auteurs': dict_p.values()})
-	df_p.set_index('id_article', inplace=True)
-	df_p.sort_index(axis=0, inplace=True)
-
-		# pour df_a
-	df_a = pd.DataFrame({'auteur':dict_a.keys(), 'id_articles':dict_a.values()})
-	df_a.set_index('auteur', inplace=True)
-
-		# pour df_ref
-	df_ref = pd.DataFrame({'references':dict_ref.values(), 'id_article':dict_ref.keys()})
-	df_ref.set_index('id_article', inplace=True)
-	df_ref.sort_index(axis=0, inplace=True)
-
-	#Ecriture dans des fichiers csv
-	df_p.to_csv(f'{article_auteurs}.csv',index='id_article', encoding='utf_32')
-	df_a.to_csv(f'{auteur_articles}.csv',index='auteur', encoding='utf_32')
-	df_ref.to_csv(f'{article_ref}.csv')
+			# créations de dictionnaires contenant les données triées
+			dict_p, dict_a = pp_articles(chemin_articles)
+			dict_ref = pp_references(chemin_references)
 
 
-	#PROBLEME : les valeurs des DF sont bien des listes, mais apres export dans des csv ce sont des str !
+			# conversions en DataFrames et mise en forme de ces derniers
+				# pour df_p
 
-	print("> Fin du chargement des données.")
-	return 
+			df_p = pd.DataFrame({'id_article':dict_p.keys(), 'auteurs': dict_p.values()})
+			df_p.set_index('id_article', inplace=True)
+			df_p.sort_index(axis=0, inplace=True)
+
+				# pour df_a
+			df_a = pd.DataFrame({'auteur':dict_a.keys(), 'id_articles':dict_a.values()})
+			df_a.set_index('auteur', inplace=True)
+
+				# pour df_ref
+			df_ref = pd.DataFrame({'references':dict_ref.values(), 'id_article':dict_ref.keys()})
+			df_ref.set_index('id_article', inplace=True)
+			df_ref.sort_index(axis=0, inplace=True)
+
+			#Ecriture dans des fichiers csv
+			df_p.to_csv(f'{article_auteurs}.csv',index='id_article', encoding='utf_32')
+			df_a.to_csv(f'{auteur_articles}.csv',index='auteur', encoding='utf_32')
+			df_ref.to_csv(f'{article_ref}.csv')
+
+
+			#PROBLEME : les valeurs des DF sont bien des listes, mais apres export dans des csv ce sont des str !
+
+			print("> Fin du chargement des données.")
+
+		else:
+			print(f'Problème d\'accès au fichier \'{references}\'. Veuillez vérifier le nom du fichier.')
+	else:
+		print(f'Problème d\'accès au fichier \'{articles}\'. Veuillez vérifier le nom du fichier.')
+
+########### fin pre_processing ############

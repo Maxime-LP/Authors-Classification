@@ -1,8 +1,12 @@
 # chemin d'accès aux dossier contenant les articles
-fp_articles = r'C:\Users\lepau\OneDrive\Desktop'
+fp_articles = r'/home/amait/Documents/python/POO-Projet/'
+# Maxime : r'C:\Users\lepau\OneDrive\Desktop'
+# Adrien : r'/home/amait/Documents/python/POO-Projet/'
 
 # chemin d'accès aux dossier contenant les articles
-fp_ref = r'C:\Users\lepau\OneDrive\Desktop'
+fp_ref = r'/home/amait/Documents/python/POO-Projet/'
+# Maxime : r'C:\Users\lepau\OneDrive\Desktop'
+# Adrien : r'/home/amait/Documents/python/POO-Projet/'
 
 # nom des fichiers créés après le pre-processing
 article_auteurs = "article_auteurs"
@@ -16,14 +20,16 @@ article_ref = "article_ref"
 ################################
 """
 
-- supprimer espace devant les auteur
 
-- décider comment entré le nom des auteur
-	idée 1: mettre un caractère à la fin et au début du nom
-	idée 2: supprimer les choses comme A. ou Yu. etc
-
-- supprimer les choses entre parenthèses, exemple: (Bidule University)
+- décider comment entré le nom des auteur => mettre des quote
 
 
+"""
 
+
+#######################################
+###      Idées d'optimisation       ###
+#######################################
+"""
+- trouver une expression régulière 
 """
