@@ -8,14 +8,6 @@ from time import time
 from collections import defaultdict
 from pylatexenc.latex2text import LatexNodes2Text
 
-########### début adj_mat ############
-
-def adj_mat(dico):
-	return
-
-########### fin adj_mat ############
-
-
 # pp := pre-processing
 
 ########### début pp_articles ############

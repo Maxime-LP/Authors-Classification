@@ -19,6 +19,7 @@ def help():
 	print('> Utiliser une commande:')
 	print('./communaute.py maCommande argument1 argument2')
 
+
 if __name__ == "__main__":
 
 	"""# commandes disponible de l'application 
@@ -43,13 +44,13 @@ if __name__ == "__main__":
 			Auteur(sys.argv[2]).cite(sys.argv[3])
 
 		elif sys.argv[1] == 'communaute':
-			Communaute(sys.argv[2]).graph(sys.argv[3])
+			Communaute(sys.argv[2]).mat_adj(sys.argv[3])
 
 		else:
 			print('Saisie non-valide. Tapez \'./communaute help\' pour plus d\'informations.')
 			#dispatcher[sys.argv[1]](sys.argv[2], sys.argv[3])
 
 	except KeyError:
-		print('Commande invalide. Pour plus d\'informations: ./communaute help')
+		print('Commande invalide. Pour plus d\'informations taper \'./communaute help\'')
 	except IndexError:
 		print('Argument(s) invalide(s).')
