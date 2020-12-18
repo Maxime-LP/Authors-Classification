@@ -104,11 +104,30 @@ class Communaute(Auteur):
         n = len(data2)
         mat = np.zeros((n,n), int)
         auteurs = list(data2.index)
+        #print(auteurs)
         # création d'un DF avec le nom des auteurs en index et colonnes
         mat_adj = pd.DataFrame(mat, index=auteurs, columns=auteurs, dtype=int) # memory_usage : 112608*2
-        #for auteur in auteurs:
-        dict_tmp = Auteur('C.Itzykson').cite(1)
-        print(mat_adj.memory_usage())
+        # ligne par ligne on fait +1 lorsque un auteur est cité
+        tmp = list(Auteur('MaximilianKreuzer').cite(1).keys())
+        print(tmp)
+        for auteur in tmp:
+            if '\\' in auteur:
+                print(auteur)
+                tmp.remove(auteur)
+        try:
+            pass
+            #print(mat_adj.loc['MaximilianKreuzer'][tmp])
+        except KeyError as k:
+            print(k)
+        """ for auteur in auteurs:
+                                 print(auteur)
+                                 tmp = list(Auteur(auteur).cite(1).keys())
+                                 try:
+                                     mat_adj.loc[auteur][tmp] = 1
+                                 except KeyError as k:
+                                     print(k)"""
+        return mat_adj
+
 
     """def __str__(self):
                 return f"La communauté autour de {self.auteur} ..."""
