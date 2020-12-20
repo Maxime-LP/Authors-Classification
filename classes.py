@@ -12,127 +12,132 @@ ref = pd.read_csv(f'{article_ref}.csv',sep=',',usecols=['id_article','references
 
 
 class Article: #OK
-	"""
-	Un article = un id + une liste d'auteurs
-	"""
-	def __init__(self,given_id):
-		self.id=int(given_id)
-		self.ref=ref.references[self.id]
-		self.auteurs=data.auteurs[self.id]
+    """
+    Un article = un id + une liste d'auteurs
+    """
+    def __init__(self,given_id):
+        self.id=int(given_id)
+        self.ref=ref.references[self.id]
+        self.auteurs=data.auteurs[self.id]
 
 
 class Auteur: #OK
-	"""
-	Les éléments de la classe auteur ont deux attributs: name et liste_articles
-	"""
+    """
+    Les éléments de la classe auteur ont deux attributs: name et liste_articles
+    """
 
-	def __init__(self, name):
-		self.name=name
-		self.liste_articles=data2.id_articles[f'{self.name}']
-	
-	def cite(self, N=1):
-		"""
-		Retourne un dict {auteur : influence}
-		L'argument influence détermine si on veut avoir les influences des auteurs
-		"""
+    def __init__(self, name):
+        self.name=name
+        try:
+            self.liste_articles=data2.id_articles[f'{self.name}']
+        except KeyError:
+            pass
+    
+    def cite(self, N=1):
+        """
+        Retourne un dict {auteur : influence}
+        L'argument influence détermine si on veut avoir les influences des auteurs
+        """
 
-		quoted_authors = {}
+        quoted_authors = {}
 
-		try:
-			N = int(N)
+        try:
+            N = int(N)
 
-			if N==0: return self.name
+            if N==0: return self.name
 
-			# on récupère les contributions de l'auteur
-			next_step_papers = data2.id_articles[self.name]
-			next_step_papers = re.split(", ",next_step_papers[1:-1]) #En attente de correction du problème des .csv en fin de processing
+            # on récupère les contributions de l'auteur
+            next_step_papers = data2.id_articles[self.name]
+            next_step_papers = re.split(", ",next_step_papers[1:-1]) #En attente de correction du problème des .csv en fin de processing
 
-			for k in range(1,N+1):
-				#print(f"Profondeur : {k}/{N}")
-				written_papers = next_step_papers
-				next_step_papers = []
+            for k in range(1,N+1):
+                #print(f"Profondeur : {k}/{N}")
+                written_papers = next_step_papers
+                next_step_papers = []
 
-				for paper in written_papers:
-					paper = int(paper)
-					#pour chaque article écrit, on récupère la liste des articles cités, puis on remonte les auteurs
-					try :
-						#On est à priori pas sûr que le papier considéré en cite au moins un autre
-						references=ref.references[paper][2:-2]
-						quoted_papers=re.split("', '",references)
-						quoted_authors_tmp  = []
-						for paper_tmp in quoted_papers:
-							quoted_authors_tmp+=re.split("""', '|", "|', "|", '""", data.auteurs[int(paper_tmp)][2:-2])
-							#On en profite pour ajouter les papiers cités à la liste des papiers à traiter à la prochaine itération
-							if self.name not in data.auteurs[int(paper_tmp)] :
-								next_step_papers.append(paper_tmp)
-					except KeyError:
-						quoted_authors_tmp = []
+                for paper in written_papers:
+                    paper = int(paper)
+                    #pour chaque article écrit, on récupère la liste des articles cités, puis on remonte les auteurs
+                    try :
+                        #On est à priori pas sûr que le papier considéré en cite au moins un autre
+                        references=ref.references[paper][2:-2]
+                        quoted_papers=re.split("', '",references)
+                        quoted_authors_tmp  = []
+                        for paper_tmp in quoted_papers:
+                            quoted_authors_tmp+=re.split("""', '|", "|', "|", '""", data.auteurs[int(paper_tmp)][2:-2])
+                            #On en profite pour ajouter les papiers cités à la liste des papiers à traiter à la prochaine itération
+                            if self.name not in data.auteurs[int(paper_tmp)] :
+                                next_step_papers.append(paper_tmp)
+                    except KeyError:
+                        quoted_authors_tmp = []
 
-					for author in quoted_authors_tmp:
-						if author != self.name and author != "":
-							if author not in quoted_authors.keys():
-								quoted_authors[author] = 1/k
-							else:
-								quoted_authors[author] += 1/k
-		except ValueError:
-			print('Saisir un entier naturel pour la profondeur.')
+                    for author in quoted_authors_tmp:
+                        if author != self.name and author != "":
+                            if author not in quoted_authors.keys():
+                                quoted_authors[author] = 1/k
+                            else:
+                                quoted_authors[author] += 1/k
+        except ValueError:
+            print('Saisir un entier naturel pour la profondeur.')
 
-		return quoted_authors
+        return quoted_authors
 
 
 
 class Communaute(Auteur):
 
-	"""def __init__(self, name):
-					self.name = name
-					self.profondeur = profondeur"""
+    mat_adj = pd.DataFrame()
 
-	def graph(self, N):
-		# On récupère le dict {auteur : influence}
-		dict_auteur = self.cite(N)
+    """def __init__(self, name):
+                    self.name = name
+                    self.profondeur = profondeur"""
 
-		dicts_inverse = defaultdict()
-		for auteur in list(dict_auteur.keys()):
-			dict_tmp = Auteur(auteur).cite(N)
-			if auteur in dict_tmp.keys():
-				print('ok')
-			if self in dict_tmp.keys():
-				print('ok')
+    def graph(self, N):
+        # On récupère le dict {auteur : influence}
+        dict_auteur = self.cite(N)
 
-	def mat_adj(self, N):
-		n = len(data2)
-		mat = np.zeros((n,n), int)
-		auteurs = list(data2.index)
-		#print(auteurs)
-		# création d'un DF avec le nom des auteurs en index et colonnes
-		mat_adj = pd.DataFrame(mat, index=auteurs, columns=auteurs, dtype=int) # memory_usage : 112608*2
-		# ligne par ligne on fait +1 lorsque un auteur est cité
-		tmp = list(Auteur('MaximilianKreuzer').cite(1).keys())
-		print(tmp)
-		for auteur in tmp:
-			if '\\' in auteur:
-				print(auteur)
-				tmp.remove(auteur)
-		try:
-			pass
-			#print(mat_adj.loc['MaximilianKreuzer'][tmp])
-		except KeyError as k:
-			print(k)
-		""" for auteur in auteurs:
-								 print(auteur)
-								 tmp = list(Auteur(auteur).cite(1).keys())
-								 try:
-									 mat_adj.loc[auteur][tmp] = 1
-								 except KeyError as k:
-									 print(k)"""
-		return mat_adj
+        dicts_inverse = defaultdict()
+        for auteur in list(dict_auteur.keys()):
+            dict_tmp = Auteur(auteur).cite(N)
+            if auteur in dict_tmp.keys():
+                print('ok')
+            if self in dict_tmp.keys():
+                print('ok')
+        return
 
 
-	"""def __str__(self):
-				return f"La communauté autour de {self.auteur} ..."""
+    # la matrice d'adjacence exporté fais plus de 300Mo => FBI
+    def mat_adj(self, N):
+        n = len(data2)
+        mat = np.zeros((n,n), int)
+        auteurs = list(data2.index)
+        print(len(auteurs))
+
+        # création d'un DF avec le nom des auteurs en index et colonnes
+        mat_adj = pd.DataFrame(mat, index=auteurs, columns=auteurs, dtype=int) # memory_usage : 112608*2
+
+        # ligne par ligne on fait +1 lorsque un auteur est cité
+        for auteur in auteurs:
+            try:
+                if '(' in auteur:
+                    print(auteur)
+            except TypeError:
+                pass #print(auteur)
+            '''try:
+                tmp = list(Auteur(auteur).cite(1).keys())
+            except TypeError:
+                pass
+            if tmp != []:
+                #print(tmp)
+                try:
+                    mat_adj.loc[auteur][tmp] = 1
+                except KeyError:
+                    pass
+        mat_adj.to_csv('mat_adj.csv')
+        return'''
 
 
-time0=time.time()
+"""time0=time.time()
 test=Auteur('N.Warner')
 print(test.cite(3))
-print(time.time()-time0)
+print(time.time()-time0)"""

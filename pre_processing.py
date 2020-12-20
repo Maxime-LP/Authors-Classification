@@ -52,7 +52,7 @@ def pp_articles(chemin_articles):
 							# récupère nom des auteurs dans une liste
 							nb_line_author += 1
 							line_tmp=line[9:-1]
-							#Suppression des noms d'universités
+							# Suppression des éléments entre parenthèses
 							while True:
 								try:
 									index1=line_tmp.index('(')
@@ -63,18 +63,23 @@ def pp_articles(chemin_articles):
 										line_tmp=line_tmp[0:index1] + line_tmp[index2+1:-1] + line_tmp[-1]
 								except ValueError:
 									break
+							if '(' in line_tmp:
+								index = line_tmp.index('(')
+								line_tmp = line_tmp[:index]
 
 							# On crée une liste avec les noms d'auteurs en séparant avec certaines chaînes de caractères
 							line_tmp = re.split(', and | and | nd | , | ,|, |,|& ',line_tmp)
 							# On supprime aussi les espaces restant dans les noms d'auteurs et traduit les caractères spéciaux écrit en LaTeX
-							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
+							line_tmp = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
+							# création du dict {papier : auteur}
+							dict_p[tmp_paper] = line_tmp
 							
 
 						if line[:8] == "Author: ":
 							# récupère nom des auteurs dans une liste
 							nb_line_author +=  1
 							line_tmp=line[8:-1]
-							#Suppression des noms d'universités
+							# Suppression des éléments entre parenthèses
 							while True:
 								try:
 									index1=line_tmp.index('(')
@@ -85,10 +90,16 @@ def pp_articles(chemin_articles):
 										line_tmp=line_tmp[0:index1] + line_tmp[index2+1:-1] + line_tmp[-1]
 								except ValueError:
 									break
+							if '(' in line_tmp:
+								index = line_tmp.index('(')
+								line_tmp = line_tmp[:index]
 
-							# pareil que plus haut
-							line_tmp = re.split(', and | and | nd | , | ,|, |,|& ', line_tmp)
-							dict_p[tmp_paper] = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
+							# On crée une liste avec les noms d'auteurs en séparant avec certaines chaînes de caractères
+							line_tmp = re.split(', and | and | nd | , | ,|, |,|& ',line_tmp)
+							# On supprime aussi les espaces restant dans les noms d'auteurs et traduit les caractères spéciaux écrit en LaTeX
+							line_tmp = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
+							# création du dict {papier : auteur}
+							dict_p[tmp_paper] = line_tmp
 
 			# affichage de la progression du traitement 
 			progression_pct = progression / nb_files * 100

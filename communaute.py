@@ -30,27 +30,27 @@ if __name__ == "__main__":
 
 
 	# selection d'une commande		
-	try:
-		if sys.argv[1] == 'test':
-			test_df()
+	#try:
+	if sys.argv[1] == 'test':
+		test_df()
 
-		if sys.argv[1] == 'help':
-			aide()
+	if sys.argv[1] == 'help':
+		aide()
 
-		elif sys.argv[1] == 'init':
-			pre_processing(sys.argv[2], sys.argv[3])
+	elif sys.argv[1] == 'init':
+		pre_processing(sys.argv[2], sys.argv[3])
 
-		elif sys.argv[1] == 'cite':
-			Auteur(sys.argv[2]).cite(sys.argv[3])
+	elif sys.argv[1] == 'cite':
+		Auteur(sys.argv[2]).cite(sys.argv[3])
 
-		elif sys.argv[1] == 'communaute':
-			Communaute(sys.argv[2]).mat_adj(sys.argv[3])
+	elif sys.argv[1] == 'communaute':
+		Communaute(sys.argv[2]).graph(sys.argv[3])
 
-		else:
-			print('Saisie non-valide. Tapez \'./communaute help\' pour plus d\'informations.')
-			#dispatcher[sys.argv[1]](sys.argv[2], sys.argv[3])
+	else:
+		print('Saisie non-valide. Tapez \'./communaute help\' pour plus d\'informations.')
+		#dispatcher[sys.argv[1]](sys.argv[2], sys.argv[3])
 
-	except KeyError:
-		print('Commande invalide. Pour plus d\'informations taper \'./communaute help\'')
-	except IndexError:
-		print('Argument(s) invalide(s).')
+	#except KeyError:
+		#print('Commande invalide. Pour plus d\'informations taper \'./communaute help\'')
+	#except IndexError:
+		#print('Argument(s) invalide(s).')
