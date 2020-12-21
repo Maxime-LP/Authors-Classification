@@ -88,22 +88,22 @@ class Auteur: #OK
 
 
 
-class Communaute(Auteur):
+class Communaute():
 
-    mat_adj = pd.DataFrame()
+    #mat_adj = pd.DataFrame()
 
-    """def __init__(self, name):
-                    self.name = name
-                    self.profondeur = profondeur"""
-
+    def __init__(self, auteur, profondeur):
+        self.auteur = Auteur(auteur)
+        self.profondeur = profondeur
+                    
     def graph(self, N):
         # initialisation du graphe de la commuanute
         g = nx.Graph()
         # On récupère le dict {auteur : influence}
-        dict_auteur = self.cite(N)
+        dict_auteur = self.auteur.cite(N)
         auteurs_cites = dict_auteur.keys()
         for n in range(1,N):
-            g.add_edges_from([(self.name, i) for i in auteurs_cites])
+            g.add_edges_from([(self.auteur.name, i) for i in auteurs_cites])
 
         plt.figure()
         nx.draw(g)
@@ -113,13 +113,14 @@ class Communaute(Auteur):
 
     # la matrice d'adjacence exporté fais plus de 300Mo => FBI
     def mat_adj(self, N):
+        mat_adj=pd.DataFrame()
         n = len(data2)
         mat = np.zeros((n,n), int)
         auteurs = list(data2.index)
-        print(len(auteurs))
 
         # création d'un DF avec le nom des auteurs en index et colonnes
-        mat_adj = pd.DataFrame(mat, index=auteurs, columns=auteurs, dtype=int) # memory_usage : 112608*2
+        mat_adj = pd.DataFrame(mat, index=auteurs, columns=auteurs, dtype=float) # memory_usage : 112608*2
+        return mat_adj
 
         '''# ligne par ligne on fait +1 lorsque un auteur est cité
         for auteur in auteurs:
@@ -142,7 +143,11 @@ class Communaute(Auteur):
         return'''
 
 
-"""time0=time.time()
-test=Auteur('N.Warner')
+
+test=Auteur('C.Itzykson')
 print(test.cite(3))
-print(time.time()-time0)"""
+
+test=Communaute('C.Itzykson',3)
+test.mat_adj(3)
+print(test.mat_adj(3))
+
