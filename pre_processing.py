@@ -1,5 +1,6 @@
 from config import fp_articles, fp_ref, article_auteurs, auteur_articles, auteur_auteurs_cites, article_ref
 import pandas as pd
+import json
 import numpy as np
 import re
 import os
@@ -176,6 +177,9 @@ def pre_processing(articles, references):
 			dict_p, dict_a, dict_aa = pp_articles(chemin_articles)
 			dict_ref = pp_references(chemin_references)
 
+			with open('dict_aa.txt', 'w',encoding='utf-32') as file:
+				json.dump(dict_aa, file)
+
 			# conversions en DataFrames et mise en forme de ces derniers
 				# pour df_p
 			df_p = pd.DataFrame({'id_article':dict_p.keys(), 'auteurs': dict_p.values()})
@@ -198,7 +202,7 @@ def pre_processing(articles, references):
 			#Ecriture dans des fichiers csv
 			df_p.to_csv(f'{article_auteurs}.csv',index='id_article', encoding='utf_32')
 			df_a.to_csv(f'{auteur_articles}.csv',index='auteur', encoding='utf_32')
-			df_aa.to_csv(f'{auteur_auteurs_cites}.csv',index='auteur', encoding='utf_32')
+			df_aa.to_json(f'{auteur_auteurs_cites}.json', orient='columns')
 			df_ref.to_csv(f'{article_ref}.csv')
 
 
