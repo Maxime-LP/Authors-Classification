@@ -30,5 +30,5 @@ article_ref = "df_ref"
 ###      Idées d'optimisation       ###
 #######################################
 """
-- trouver une expression régulière 
+- regarder quelle étape prend la plus de temps dans le pre-processing => utiliser class timeit.Timer 
 """

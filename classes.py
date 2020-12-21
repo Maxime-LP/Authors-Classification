@@ -37,8 +37,8 @@ class Auteur: #OK
     
     def cite(self, N=1):
         """
-        Retourne un dict {auteur : influence}
-        L'argument influence détermine si on veut avoir les influences des auteurs
+        Entrées : nom d'un auteur, profondeur des citations
+        Sorties :  dictionnaire de la forme {auteur : influence}
         """
 
         quoted_authors = {}
@@ -53,7 +53,6 @@ class Auteur: #OK
             next_step_papers = re.split(", ",next_step_papers[1:-1]) #En attente de correction du problème des .csv en fin de processing
 
             for k in range(1,N+1):
-                print(k)
                 #print(f"Profondeur : {k}/{N}")
                 written_papers = next_step_papers
                 next_step_papers = []
@@ -83,9 +82,17 @@ class Auteur: #OK
         except ValueError:
             print('Saisir un entier naturel pour la profondeur.')
 
-        print(quoted_authors.keys())
+        #print(quoted_authors.keys())
         return quoted_authors
 
+
+        def influences(self,N=1):
+            """
+            Entrées : nom d'un auteur, profondeur des citations
+            Sorties : dictionnaire de la forme {auteur : auteurs_cités}
+            """
+
+            
 
 
 class Communaute():
