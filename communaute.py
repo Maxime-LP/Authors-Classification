@@ -13,9 +13,9 @@ if sys.argv[1]!='init': #Pour eviter d'essayer d'importer les fichiers csv lorsq
 	from classes import Article, Auteur, Communaute
 
 
-def help():
+def aide():
 	print('> Liste des commandes:')
-	print('init')
+	print('init  cite  communaute')
 	print('> Utiliser une commande:')
 	print('./communaute.py maCommande argument1 argument2')
 
@@ -34,7 +34,7 @@ if __name__ == "__main__":
 	if sys.argv[1] == 'test':
 		test_df()
 
-	if sys.argv[1] == 'help':
+	if sys.argv[1] == 'aide':
 		aide()
 
 	elif sys.argv[1] == 'init':
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 		Communaute(sys.argv[2]).graph(sys.argv[3])
 
 	else:
-		print('Saisie non-valide. Tapez \'./communaute help\' pour plus d\'informations.')
+		print('Saisie non-valide. Tapez \'./communaute aide\' pour plus d\'informations.')
 		#dispatcher[sys.argv[1]](sys.argv[2], sys.argv[3])
 
 	#except KeyError:

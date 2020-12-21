@@ -9,9 +9,10 @@ fp_ref = r'/home/amait/Documents/python/POO-Projet/'
 # Adrien : r'/home/amait/Documents/python/POO-Projet/'
 
 # nom des fichiers créés après le pre-processing
-article_auteurs = "article_auteurs"
-auteur_articles = "auteur_articles"
-article_ref = "article_ref"
+article_auteurs = "df_p"
+auteur_articles = "df_a"
+auteur_auteurs_cites = "df_aa"
+article_ref = "df_ref"
 
 
 

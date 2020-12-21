@@ -5,6 +5,8 @@ import os
 from collections import defaultdict
 from config import fp_articles, fp_ref, article_auteurs, auteur_articles, article_ref
 import time
+import networkx as nx
+import matplotlib.pyplot as plt
 
 data = pd.read_csv(f'{article_auteurs}.csv',sep=',',encoding='utf-32',usecols=['id_article','auteurs'],index_col='id_article') #DF Article Auteurs
 data2 = pd.read_csv(f'{auteur_articles}.csv',sep=',',encoding='utf-32',usecols=['auteur','id_articles'],index_col='auteur')   #DF Auteur Articles
@@ -44,13 +46,14 @@ class Auteur: #OK
         try:
             N = int(N)
 
-            if N==0: return self.name
+            if N == 0: return self.name
 
             # on récupère les contributions de l'auteur
             next_step_papers = data2.id_articles[self.name]
             next_step_papers = re.split(", ",next_step_papers[1:-1]) #En attente de correction du problème des .csv en fin de processing
 
             for k in range(1,N+1):
+                print(k)
                 #print(f"Profondeur : {k}/{N}")
                 written_papers = next_step_papers
                 next_step_papers = []
@@ -80,6 +83,7 @@ class Auteur: #OK
         except ValueError:
             print('Saisir un entier naturel pour la profondeur.')
 
+        print(quoted_authors.keys())
         return quoted_authors
 
 
@@ -93,16 +97,17 @@ class Communaute(Auteur):
                     self.profondeur = profondeur"""
 
     def graph(self, N):
+        # initialisation du graphe de la commuanute
+        g = nx.Graph()
         # On récupère le dict {auteur : influence}
         dict_auteur = self.cite(N)
+        auteurs_cites = dict_auteur.keys()
+        for n in range(1,N):
+            g.add_edges_from([(self.name, i) for i in auteurs_cites])
 
-        dicts_inverse = defaultdict()
-        for auteur in list(dict_auteur.keys()):
-            dict_tmp = Auteur(auteur).cite(N)
-            if auteur in dict_tmp.keys():
-                print('ok')
-            if self in dict_tmp.keys():
-                print('ok')
+        plt.figure()
+        nx.draw(g)
+        plt.show()
         return
 
 
@@ -116,14 +121,14 @@ class Communaute(Auteur):
         # création d'un DF avec le nom des auteurs en index et colonnes
         mat_adj = pd.DataFrame(mat, index=auteurs, columns=auteurs, dtype=int) # memory_usage : 112608*2
 
-        # ligne par ligne on fait +1 lorsque un auteur est cité
+        '''# ligne par ligne on fait +1 lorsque un auteur est cité
         for auteur in auteurs:
             try:
                 if '(' in auteur:
                     print(auteur)
             except TypeError:
-                pass #print(auteur)
-            '''try:
+                print(auteur)
+            try:
                 tmp = list(Auteur(auteur).cite(1).keys())
             except TypeError:
                 pass
