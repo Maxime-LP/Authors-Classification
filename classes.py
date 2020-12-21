@@ -94,7 +94,6 @@ class Auteur: #OK
         return quoted_authors
 
 
-<<<<<<< HEAD
 
     def influences(self, N=1):
         """
@@ -105,30 +104,42 @@ class Auteur: #OK
         auteurs_cites = {}
 
         try:
+            # on veut une profondeur d'au moins 1
             if int(N) <= 0:
                 raise ValueError
 
             N = int(N)
             
+            # dict final
             auteurs_influence = defaultdict(float)
+            # list des auteurs influencé au rank précédant
+            auteurs_rang_courant = [self.name]
+            # liste des auteurs à tester au prochain rang
+            auteurs_rang_suivant = []
 
+            # boucle sur les profondeurs
             for k in range(1, N+1):
-                # in progress
+                for auteur_courant in auteurs_rang_courant:
+                    for auteur in dict_aa.keys():
+                        # test si l'auteur courant influence l'auteur
+                        if auteur_courant in dict_aa[auteur]:
+                            # y réfléchir
+                            if auteur != self.name:
+                                auteurs_rang_suivant.append(auteur)
 
-                for auteur in dict_aa.keys():
-                    if self.name in dict_aa[auteur]:
-                        auteurs_influence[auteur]+= 1/k
-            print(auteurs_influence)
+                            # ajout d'influence en fonction de la profondeur
+                            auteurs_influence[auteur]+= 1/k
+                # on supprime les doublons
+                auteurs_rang_courant = list(set(auteurs_rang_suivant))
+                auteurs_rang_suivant = []
+            
+            #print(auteurs_influence)
 
         except ValueError:
             print('Saisir un entier naturel non nul pour la profondeur.')
 
         return
 
-            
-
-=======
->>>>>>> 46ca2b00a9041f3394151777b7501e83dfe7205a
 
 class Communaute():
 
