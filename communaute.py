@@ -15,7 +15,7 @@ if sys.argv[1]!='init': #Pour eviter d'essayer d'importer les fichiers csv lorsq
 
 def aide():
 	print('> Liste des commandes:')
-	print('init  cite  influences  communaute')
+	print('init  cite  communaute')
 	print('> Utiliser une commande:')
 	print('./communaute.py maCommande argument1 argument2')
 
@@ -42,9 +42,6 @@ if __name__ == "__main__":
 
 	elif sys.argv[1] == 'cite':
 		Auteur(sys.argv[2]).cite(sys.argv[3])
-
-	elif sys.argv[1] == 'influences':
-		Auteur(sys.argv[2]).influences(sys.argv[3])
 
 	elif sys.argv[1] == 'communaute':
 		Communaute(sys.argv[2]).graph(sys.argv[3])
