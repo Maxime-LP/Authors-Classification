@@ -7,6 +7,7 @@ import platform
 from time import time
 from collections import defaultdict
 from pylatexenc.latex2text import LatexNodes2Text
+#Installation du module pylatexenc : pip install git+https://github.com/phfaist/pylatexenc.git
 
 # pp := pre-processing
 
