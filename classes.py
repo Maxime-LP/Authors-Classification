@@ -65,8 +65,6 @@ class Auteur:
 		return quoted_authors
 
 
-
-
 class Communaute():
 
 	def __init__(self, auteur, profondeur):
