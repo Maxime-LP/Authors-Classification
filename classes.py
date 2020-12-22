@@ -44,7 +44,8 @@ class Auteur: #OK
     
     def cite(self, N=1):
         """
-        Retourne un dict des auteurs cités {auteur : influence}
+        Retourne un dict {auteur : influence}
+        L'argument influence détermine si on veut avoir les influences des auteurs
         """
 
         quoted_authors = {}
@@ -92,15 +93,53 @@ class Auteur: #OK
         print(quoted_authors.keys())
         return quoted_authors
 
-
-
-    def influences(self, N=1):
+    def cite_bis(self, N=1):
         """
         Entrées : nom d'un auteur, profondeur des citations
         Sorties : dictionnaire de la forme {auteur : auteurs_cités}
         """
 
-        auteurs_cites = {}
+        try:
+            # on veut une profondeur d'au moins 1
+            if int(N) <= 0:
+                raise ValueError
+
+            N = int(N)
+            
+            # dict final
+            auteurs_cites = defaultdict(float)
+            # list des auteurs influencé au rank précédant
+            auteurs_rang_courant = [self.name]
+            # liste des auteurs à tester au prochain rang
+            auteurs_rang_suivant = []
+
+            # boucle sur les profondeurs
+            for k in range(1, N+1):
+                for auteur_courant in auteurs_rang_courant:
+                    for auteur in dict_aa[auteur_courant]:
+                        # ajout d'influence en fonction de la profondeur
+                        auteurs_cites[auteur]+= 1/k
+                        auteurs_rang_suivant.append(auteur)
+                # on supprime les doublons
+                auteurs_rang_courant = list(set(auteurs_rang_suivant))
+                auteurs_rang_suivant = []
+            
+        # QUESTION : Comment gérer la citation de self lui même?!
+
+            #print(auteurs_cites)
+
+        except ValueError:
+            print('Saisir un entier naturel non nul pour la profondeur.')
+
+        return auteurs_cites
+
+
+
+    def influences(self, N=1):
+        """
+        Entrées : nom d'un auteur, profondeur des citations
+        Sorties : dictionnaire de la forme {auteur : auteurs_influencés}
+        """
 
         try:
             # on veut une profondeur d'au moins 1
@@ -137,7 +176,7 @@ class Auteur: #OK
         except ValueError:
             print('Saisir un entier naturel non nul pour la profondeur.')
 
-        return auteurs_cites
+        return
 
 
 class Communaute():
@@ -145,27 +184,17 @@ class Communaute():
     #mat_adj = pd.DataFrame()
 
     def __init__(self, auteur, profondeur):
-        self.auteur_central = Auteur(auteur)
+        self.auteur = Auteur(auteur)
         self.profondeur = profondeur
-        self.membres = {}
-        
-        dict_auteurs_1=self.auteur_central.cite(self.profondeur)
-        dict_auteurs_2=self.auteur_central.influences(self.profondeur)
-        #On a les liste des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
-        liste_auteurs = list(set(dict_auteurs_1.keys()) & set(dict_auteurs_2.keys()))
-        #Construisons ensuite le dictionnaire {auteur : influence} où influence est la moyenne des influences vers l'auteur et depuis l'auteur
-        for auteur in liste_auteurs:
-            self.membres[auteur] = (dict_auteurs_1[auteur] + dict_auteurs_2[auteur]) / 2
-
-
+                    
     def graph(self, N):
-        """
-        Construction du graphe de la communauté
-        """
+        # initialisation du graphe de la commuanute
         g = nx.Graph()
-
-        for auteur in self.membres.keys():
-            g.add_node(auteur)
+        # On récupère le dict {auteur : influence}
+        dict_auteur = self.auteur.cite(N)
+        auteurs_cites = dict_auteur.keys()
+        for n in range(1,N):
+            g.add_edges_from([(self.auteur.name, i) for i in auteurs_cites])
 
         plt.figure()
         nx.draw(g)
