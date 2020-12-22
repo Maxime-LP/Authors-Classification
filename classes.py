@@ -49,10 +49,10 @@ class Auteur:
 				#pour chaque article écrit, on récupère la liste des articles cités, puis on remonte les auteurs
 				try :
 					#On est à priori pas sûr que le papier considéré en cite au moins un autre
-					references=ref.references[paper][2:-2]
-					quoted_papers=re.split("', '",references)
+					references=ref.references[paper][1:-1]
+					quoted_papers=re.split(", ",references)
 					quoted_authors_tmp  = []
-					for paper_tmp in quoted_papers:                            
+					for paper_tmp in quoted_papers:
 						quoted_authors_tmp+=re.split("""', '|", "|', "|", '""", data.auteurs[int(paper_tmp)][2:-2])
 						#On en profite pour ajouter les papiers cités à la liste des papiers à traiter à la prochaine itération
 						if self.name not in data.auteurs[int(paper_tmp)] :
@@ -105,5 +105,5 @@ class Communaute():
 		plt.show()
 		return
 
-test=Auteur('C.Itzykson')
-test.cite(1)
+test=Auteur('N.Warner')
+print(test.cite(3))
