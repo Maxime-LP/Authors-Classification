@@ -137,20 +137,6 @@ def pp_articles(chemin_articles,chemin_references):
 		for author in authors:
 			dict_a[author].append(paper)
 
-	# Construction du dict {auteur : auteurs_cités}
-	for auteur in dict_a.keys():
-		auteurs_cites = []
-		for papier in dict_a[auteur]:
-			papiers_cites=dict_ref[papier]
-			for papier_cite in papiers_cites:
-				auteurs_cites = list(set(auteurs_cites) | set(dict_p[papier_cite]))
-		try:
-			auteurs_cites=auteurs_cites.remove(auteur)
-		except ValueError:
-			pass
-		dict_aa[auteur] = auteurs_cites
-
-
 	# Informations sur le dossier articles
 	nb_articles = len(dict_p)
 	nb_auteurs = len(dict_a)

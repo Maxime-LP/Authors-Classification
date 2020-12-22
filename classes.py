@@ -90,99 +90,11 @@ class Auteur: #OK
         except ValueError:
             print('Saisir un entier naturel pour la profondeur.')
 
-        print(quoted_authors)
-        return #quoted_authors
 
-    def cite_bis(self, N=1):
-
-        """
-        Entrées : nom d'un auteur, profondeur des citations
-        Sorties : dictionnaire de la forme {auteur : auteurs_cités}
-        """
-
-        try:
-            # on veut une profondeur d'au moins 1
-            if int(N) <= 0:
-                raise ValueError
-
-            N = int(N)
-            
-            # dict final
-            auteurs_cites = defaultdict(float)
-            # list des auteurs influencé au rank précédant
-            auteurs_rang_courant = [self.name]
-            # liste des auteurs à tester au prochain rang
-            auteurs_rang_suivant = []
-
-            # boucle sur les profondeurs
-            for k in range(1, N+1):
-                for auteur_courant in auteurs_rang_courant:
-                    for auteur in dict_aa[auteur_courant]:
-                        # ajout d'influence en fonction de la profondeur
-                        auteurs_cites[auteur]+= 1/k
-                        auteurs_rang_suivant.append(auteur)
-                # on supprime les doublons
-                auteurs_rang_courant = list(set(auteurs_rang_suivant))
-                auteurs_rang_suivant = []
-            
-        # QUESTION : Comment gérer la citation de self lui même?!
-
-            print(auteurs_cites)
-
-        except ValueError:
-            print('Saisir un entier naturel non nul pour la profondeur.')
-
-        return auteurs_cites
-
-
-
-    def influences(self, N=1):
-        """
-        Entrées : nom d'un auteur, profondeur des citations
-        Sorties : dictionnaire de la forme {auteur : auteurs_influencés}
-        """
-
-        try:
-            # on veut une profondeur d'au moins 1
-            if int(N) <= 0:
-                raise ValueError
-
-            N = int(N)
-            
-            # dict final
-            auteurs_influence = defaultdict(float)
-            # list des auteurs influencé au rank précédant
-            auteurs_rang_courant = [self.name]
-            # liste des auteurs à tester au prochain rang
-            auteurs_rang_suivant = []
-
-            # boucle sur les profondeurs
-            for k in range(1, N+1):
-                for auteur_courant in auteurs_rang_courant:
-                    for auteur in dict_aa.keys():
-                        # test si l'auteur courant influence l'auteur
-                        if auteur_courant in dict_aa[auteur]:
-                            # laissez passer si k == 1
-                            if auteur != self.name:
-                                auteurs_rang_suivant.append(auteur)
-
-                            # ajout d'influence en fonction de la profondeur
-                            auteurs_influence[auteur]+= 1/k
-                # on supprime les doublons
-                auteurs_rang_courant = list(set(auteurs_rang_suivant))
-                auteurs_rang_suivant = []
-            
-            #print(auteurs_influence)
-
-        except ValueError:
-            print('Saisir un entier naturel non nul pour la profondeur.')
-
-        return
+        return quoted_authors
 
 
 class Communaute():
-
-    #mat_adj = pd.DataFrame()
 
     def __init__(self, auteur, profondeur):
         self.auteur_central = Auteur(auteur)
@@ -210,38 +122,8 @@ class Communaute():
         plt.show()
         return
 
-
-    '''# la matrice d'adjacence exporté fais plus de 300Mo => FBI
-    def mat_adj(self, N):
-        mat_adj=pd.DataFrame()
-        n = len(data2)
-        mat = np.zeros((n,n), int)
-        auteurs = list(data2.index)
-
-        # création d'un DF avec le nom des auteurs en index et colonnes
-        mat_adj = pd.DataFrame(mat, index=auteurs, columns=auteurs, dtype=float) # memory_usage : 112608*2
-        return mat_adj
-
-        # ligne par ligne on fait +1 lorsque un auteur est cité
-        for auteur in auteurs:
-            try:
-                if '(' in auteur:
-                    print(auteur)
-            except TypeError:
-                print(auteur)
-            try:
-                tmp = list(Auteur(auteur).cite(1).keys())
-            except TypeError:
-                pass
-            if tmp != []:
-                #print(tmp)
-                try:
-                    mat_adj.loc[auteur][tmp] = 1
-                except KeyError:
-                    pass
-        mat_adj.to_csv('mat_adj.csv')
-        return'''
 test=Auteur('C.Itzykson')
 #test.cite(1)
 
 test.cite_bis(1)
+
