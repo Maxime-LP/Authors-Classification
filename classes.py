@@ -90,10 +90,11 @@ class Auteur: #OK
         except ValueError:
             print('Saisir un entier naturel pour la profondeur.')
 
-        print(quoted_authors.keys())
+        print(quoted_authors)
         return quoted_authors
 
     def cite_bis(self, N=1):
+
         """
         Entrées : nom d'un auteur, profondeur des citations
         Sorties : dictionnaire de la forme {auteur : auteurs_cités}
@@ -126,7 +127,7 @@ class Auteur: #OK
             
         # QUESTION : Comment gérer la citation de self lui même?!
 
-            #print(auteurs_cites)
+            print(auteurs_cites)
 
         except ValueError:
             print('Saisir un entier naturel non nul pour la profondeur.')
@@ -161,7 +162,7 @@ class Auteur: #OK
                     for auteur in dict_aa.keys():
                         # test si l'auteur courant influence l'auteur
                         if auteur_courant in dict_aa[auteur]:
-                            # y réfléchir
+                            # laissez passer si k == 1
                             if auteur != self.name:
                                 auteurs_rang_suivant.append(auteur)
 
@@ -210,7 +211,7 @@ class Communaute():
         return
 
 
-    # la matrice d'adjacence exporté fais plus de 300Mo => FBI
+    '''# la matrice d'adjacence exporté fais plus de 300Mo => FBI
     def mat_adj(self, N):
         mat_adj=pd.DataFrame()
         n = len(data2)
@@ -221,7 +222,7 @@ class Communaute():
         mat_adj = pd.DataFrame(mat, index=auteurs, columns=auteurs, dtype=float) # memory_usage : 112608*2
         return mat_adj
 
-        '''# ligne par ligne on fait +1 lorsque un auteur est cité
+        # ligne par ligne on fait +1 lorsque un auteur est cité
         for auteur in auteurs:
             try:
                 if '(' in auteur:
@@ -241,12 +242,6 @@ class Communaute():
         mat_adj.to_csv('mat_adj.csv')
         return'''
 
-
-
-"""test=Auteur('C.Itzykson')
-print(test.cite(3))
-"""
-
-test=Communaute('C.Itzykson',3)
-test.graph()
+test=Auteur('C.Itzykson')
+test.cite(3)
 
