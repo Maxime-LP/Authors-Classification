@@ -201,9 +201,8 @@ class Communaute():
         """
         """
         g = nx.Graph()
-        
-        for auteur in self.membres.keys():
-            g.add_edges_from([auteur])
+        #On trace les relations entre l'auteur central et les membres de la communautés (pour le moment j'utilise un attribut weight)
+        g.add_edges_from([(self.auteur_central,membre_i,{'weight': self.membres[membre_i]}) for membre_i in self.membres.keys()])
 
         plt.figure()
         nx.draw(g)
