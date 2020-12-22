@@ -187,14 +187,13 @@ class Communaute():
         self.auteur = Auteur(auteur)
         self.profondeur = profondeur
                     
-    def graph(self, N):
-        # initialisation du graphe de la commuanute
+    def graph(self):
+        """
+        """
         g = nx.Graph()
-        # On récupère le dict {auteur : influence}
-        dict_auteur = self.auteur.cite(N)
-        auteurs_cites = dict_auteur.keys()
-        for n in range(1,N):
-            g.add_edges_from([(self.auteur.name, i) for i in auteurs_cites])
+        
+        for auteur in self.membres.keys():
+            g.add_edges_from([auteur])
 
         plt.figure()
         nx.draw(g)
@@ -237,8 +236,8 @@ class Communaute():
 
 """test=Auteur('C.Itzykson')
 print(test.cite(3))
+"""
 
 test=Communaute('C.Itzykson',3)
-test.mat_adj(3)
-print(test.mat_adj(3))"""
+test.graph()
 
