@@ -67,14 +67,14 @@ def pp_references(chemin_references):
 
 ########### début pp_articles ############
 
-def pp_articles(chemin_articles):
+def pp_articles(chemin_articles,chemin_references):
 	"""
 	Pre-processing du dossier article.d
 	Entrées : noms du fichiers contenant les résumés d'article (arborescence).
 	Sorties : 
 	"""
 
-	dict_ref=pp_references(chemin_articles)
+	dict_ref=pp_references(chemin_references)
 
 	#récupération des fichiers dans l'arborescence
 	years = sorted(os.listdir(chemin_articles))
@@ -169,12 +169,11 @@ def pre_processing(articles, references):
 	chemin_articles = fp_articles + articles
 	chemin_references = fp_ref + references
 
-
 	if os.path.exists(chemin_articles): # Test d'acces au fichier articles
 		if os.path.exists(chemin_references): # Test d'acces au fichier references
 
 			# créations de dictionnaires contenant les données triées
-			dict_p, dict_a, dict_aa, dict_ref = pp_articles(chemin_articles)
+			dict_p, dict_a, dict_aa, dict_ref = pp_articles(chemin_articles,chemin_references)
 
 			with open('dict_aa.txt', 'w',encoding='utf-32') as file:
 				json.dump(dict_aa, file)
