@@ -44,45 +44,42 @@ class Auteur:
 
         quoted_authors = {}
 
-        try:
-            N = int(N)
+        N = int(N)
 
-            if N == 0: return self.name
+        if N == 0: return self.name
 
-            # on récupère les contributions de l'auteur
-            next_step_papers = data2.id_articles[self.name]
-            next_step_papers = re.split(", ",next_step_papers[1:-1]) #En attente de correction du problème des .csv en fin de processing
+        # on récupère les contributions de l'auteur
+        next_step_papers = data2.id_articles[self.name]
+        next_step_papers = re.split(", ",next_step_papers[1:-1]) #En attente de correction du problème des .csv en fin de processing
 
-            for k in range(1,N+1):
-                print(k)
-                #print(f"Profondeur : {k}/{N}")
-                written_papers = next_step_papers
-                next_step_papers = []
+        for k in range(1,N+1):
+            print(k)
+            #print(f"Profondeur : {k}/{N}")
+            written_papers = next_step_papers
+            next_step_papers = []
 
-                for paper in written_papers:
-                    paper = int(paper)
-                    #pour chaque article écrit, on récupère la liste des articles cités, puis on remonte les auteurs
-                    try :
-                        #On est à priori pas sûr que le papier considéré en cite au moins un autre
-                        references=ref.references[paper][2:-2]
-                        quoted_papers=re.split("', '",references)
-                        quoted_authors_tmp  = []
-                        for paper_tmp in quoted_papers:
-                            quoted_authors_tmp+=re.split("""', '|", "|', "|", '""", data.auteurs[int(paper_tmp)][2:-2])
-                            #On en profite pour ajouter les papiers cités à la liste des papiers à traiter à la prochaine itération
-                            if self.name not in data.auteurs[int(paper_tmp)] :
-                                next_step_papers.append(paper_tmp)
-                    except KeyError:
-                        quoted_authors_tmp = []
+            for paper in written_papers:
+                paper = int(paper)
+                #pour chaque article écrit, on récupère la liste des articles cités, puis on remonte les auteurs
+                try :
+                    #On est à priori pas sûr que le papier considéré en cite au moins un autre
+                    references=ref.references[paper][2:-2]
+                    quoted_papers=re.split("', '",references)
+                    quoted_authors_tmp  = []
+                    for paper_tmp in quoted_papers:                            
+                        quoted_authors_tmp+=re.split("""', '|", "|', "|", '""", data.auteurs[int(paper_tmp)][2:-2])
+                        #On en profite pour ajouter les papiers cités à la liste des papiers à traiter à la prochaine itération
+                        if self.name not in data.auteurs[int(paper_tmp)] :
+                            next_step_papers.append(paper_tmp)
+                except KeyError:
+                    quoted_authors_tmp = []
 
-                    for author in quoted_authors_tmp:
-                        if author != self.name and author != "":
-                            if author not in quoted_authors.keys():
-                                quoted_authors[author] = 1/k
-                            else:
-                                quoted_authors[author] += 1/k
-        except ValueError:
-            print('Saisir un entier naturel pour la profondeur.')
+                for author in quoted_authors_tmp:
+                    if author != self.name and author != "":
+                        if author not in quoted_authors.keys():
+                            quoted_authors[author] = 1/k
+                        else:
+                            quoted_authors[author] += 1/k
 
 
         return quoted_authors
@@ -117,7 +114,4 @@ class Communaute():
         return
 
 test=Auteur('C.Itzykson')
-#test.cite(1)
-
-test.cite_bis(1)
-
+test.cite(1)
