@@ -13,16 +13,6 @@ data = pd.read_csv(f'{article_auteurs}.csv',sep=',',encoding='utf-32',usecols=['
 data2 = pd.read_csv(f'{auteur_articles}.csv',sep=',',encoding='utf-32',usecols=['auteur','id_articles'],index_col='auteur')   #DF {auteur:articles}
 ref = pd.read_csv(f'{article_ref}.csv',sep=',',usecols=['id_article','references'],index_col='id_article')    #DF {article:references}
 
-class Article:
-    """
-    Un article = un id + une liste d'auteurs
-    """
-    def __init__(self,given_id):
-        self.id=int(given_id)
-        self.ref=ref.references[self.id]
-        self.auteurs=data.auteurs[self.id]
-
-
 class Auteur:
 
     """

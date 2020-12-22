@@ -7,6 +7,6 @@ fp_ref = r'C:\Users\Utilisateur\Desktop'
 #fp_ref = r'/home/amait/Documents/python/POO-Projet/'
 
 # nom des fichiers créés après le pre-processing
-article_auteurs = "df_p"
-auteur_articles = "df_a"
-article_ref = "df_ref"
+article_auteurs = "article_auteurs"
+auteur_articles = "auteur_articles"
+article_ref = "article_ref"

@@ -1,8 +1,6 @@
 from config import fp_articles, fp_ref, article_auteurs, auteur_articles, article_ref
-import pandas as pd
-import json
-import numpy as np
 import re
+import pandas as pd
 import os
 import platform
 from time import time
@@ -10,8 +8,8 @@ from collections import defaultdict
 from pylatexenc.latex2text import LatexNodes2Text
 #Installation du module pylatexenc : pip install git+https://github.com/phfaist/pylatexenc.git
 
-# pp := pre-processing
 
+########### début clean ############
 def clean(line_tmp):
 	"""
 	Entrées: ligne contenant les auteurs
@@ -36,45 +34,18 @@ def clean(line_tmp):
 	line_tmp = re.split(', and | and | nd | , | ,|, |,|& ',line_tmp)
 	# On supprime aussi les espaces restant dans les noms d'auteurs et traduit les caractères spéciaux écrit en LaTeX
 	line_tmp = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
-	
 	return line_tmp
+########### fin clean ############
 
-########### début pp_references ############
 
-def pp_references(chemin_references):
-		"""
-		Pre_processing du fichier texte references.txt
-		Entrées : noms du fichiers contenant les references (fichier txt)
-		Sorties : dictionnaire avec id des articles en clé et id des articles références dans le-dit article en valeurs.
-		"""
-
-		nb_relations = 0
-		dict_ref = defaultdict(list)
-
-		# récupération et pre-processing du fichier
-		with open(f'{chemin_references}',"r") as f:
-			for line in f:
-				line = line[:-1].split(' ') #On crée une liste [id1,id2] où id1 et id2 sont de type str
-				dict_ref[line[0]].append(line[1])
-				nb_relations += 1
-
-		# Informations sur le fichier references
-		print(f'> Le fichier references contient {nb_relations} relations.')
-
-		return dict_ref
-
-########### fin pp_references ############
 
 ########### début pp_articles ############
-
-def pp_articles(chemin_articles,chemin_references):
+def pp_articles(chemin_articles):
 	"""
 	Pre-processing du dossier article.d
 	Entrées : noms du fichiers contenant les résumés d'article (arborescence).
 	Sorties : 
 	"""
-
-	dict_ref=pp_references(chemin_references)
 
 	#récupération des fichiers dans l'arborescence
 	years = sorted(os.listdir(chemin_articles))
@@ -137,19 +108,41 @@ def pp_articles(chemin_articles,chemin_references):
 		for author in authors:
 			dict_a[author].append(paper)
 
+
 	# Informations sur le dossier articles
 	nb_articles = len(dict_p)
 	nb_auteurs = len(dict_a)
 	print(f'> Le dossier articles contient {nb_files} fichiers, {nb_articles} publications et {nb_auteurs} auteurs.')
 	
-	return dict_p, dict_a, dict_ref
-
+	return dict_a,dict_p,dict_ref
 ########### fin pp_articles ############
 
+########### début pp_references ############
+def pp_references(chemin_references):
+		"""
+		Pre_processing du fichier texte references.txt
+		Entrées : noms du fichiers contenant les references (fichier txt)
+		Sorties : dictionnaire avec id des articles en clé et id des articles références dans le-dit article en valeurs.
+		"""
+
+		nb_relations = 0
+		dict_ref = defaultdict(list)
+
+		# récupération et pre-processing du fichier
+		with open(f'{chemin_references}',"r") as f:
+			for line in f:
+				line = line[:-1].split(' ') #On crée une liste [id1,id2] où id1 et id2 sont de type str
+				dict_ref[int(line[0])].append(int(line[1]))
+				nb_relations += 1
+
+		# Informations sur le fichier references
+		#print(f'> Le fichier references contient {nb_relations} relations.')
+
+		return dict_ref
+########### fin pp_references ############
 
 
 ########### début pre_processing ############
-
 def pre_processing(articles, references):
 	'''
 	Pre-processing d'un nouveau jeu'de données pour l'application.
@@ -162,9 +155,10 @@ def pre_processing(articles, references):
 		if os.path.exists(chemin_references): # Test d'acces au fichier references
 
 			# créations de dictionnaires contenant les données triées
-			dict_p, dict_a, dict_ref = pp_articles(chemin_articles,chemin_references)
+			dict_a,dict_p,dict_ref = pp_articles(chemin_articles)
+			dict_ref = pp_references(chemin_references)
 
-			# conversions en DataFrames et mise en forme de ces derniers
+			'''# conversions en DataFrames et mise en forme de ces derniers
 				# pour df_p
 			df_p = pd.DataFrame({'id_article':dict_p.keys(), 'auteurs': dict_p.values()})
 			df_p.set_index('id_article', inplace=True)
@@ -183,14 +177,12 @@ def pre_processing(articles, references):
 			df_a.to_csv(f'{auteur_articles}.csv',index='auteur', encoding='utf_32')
 			df_ref.to_csv(f'{article_ref}.csv')
 
-
-			#PROBLEME : les valeurs des DF sont bien des listes, mais apres export dans des csv ce sont des str !
-
+			'''
+			
 			print("> Fin du chargement des données.")
 
 		else:
 			print(f'Problème d\'accès au fichier \'{references}\'. Veuillez vérifier le nom du fichier.')
 	else:
 		print(f'Problème d\'accès au fichier \'{articles}\'. Veuillez vérifier le nom du fichier.')
-
 ########### fin pre_processing ############
