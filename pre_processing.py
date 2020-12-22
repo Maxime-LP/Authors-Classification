@@ -144,7 +144,10 @@ def pp_articles(chemin_articles,chemin_references):
 			papiers_cites=dict_ref[papier]
 			for papier_cite in papiers_cites:
 				auteurs_cites = list(set(auteurs_cites) | set(dict_p[papier_cite]))
-		auteurs_cites.remove(auteur)
+		try:
+			auteurs_cites.remove(auteur)
+		except ValueError:
+			pass
 		dict_aa[auteur] = auteurs_cites
 
 
