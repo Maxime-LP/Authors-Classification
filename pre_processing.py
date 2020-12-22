@@ -141,7 +141,9 @@ def pp_articles(chemin_articles):
 	for auteur in dict_a.keys():
 		auteurs_cites = []
 		for papier in dict_a[auteur]:
-			auteurs_cites = list(set(auteurs_cites) | set(dict_p[papier]))
+			papiers_cites=dict_ref[papier]
+			for papier_cite in papiers_cites:
+				auteurs_cites = list(set(auteurs_cites) | set(dict_a[papier_cite]))
 		auteurs_cites.remove(auteur)
 		dict_aa[auteur] = auteurs_cites
 
@@ -154,7 +156,6 @@ def pp_articles(chemin_articles):
 	return dict_p, dict_a, dict_aa, dict_ref
 
 ########### fin pp_articles ############
-
 
 
 
