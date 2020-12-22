@@ -1,4 +1,4 @@
-from config import fp_articles, fp_ref, article_auteurs, auteur_articles, auteur_auteurs_cites, article_ref
+from config import fp_articles, fp_ref, article_auteurs, auteur_articles, article_ref
 import pandas as pd
 import json
 import numpy as np
@@ -142,7 +142,7 @@ def pp_articles(chemin_articles,chemin_references):
 	nb_auteurs = len(dict_a)
 	print(f'> Le dossier articles contient {nb_files} fichiers, {nb_articles} publications et {nb_auteurs} auteurs.')
 	
-	return dict_p, dict_a, dict_aa, dict_ref
+	return dict_p, dict_a, dict_ref
 
 ########### fin pp_articles ############
 
@@ -162,10 +162,7 @@ def pre_processing(articles, references):
 		if os.path.exists(chemin_references): # Test d'acces au fichier references
 
 			# créations de dictionnaires contenant les données triées
-			dict_p, dict_a, dict_aa, dict_ref = pp_articles(chemin_articles,chemin_references)
-
-			with open('dict_aa.txt', 'w',encoding='utf-32') as file:
-				json.dump(dict_aa, file)
+			dict_p, dict_a, dict_ref = pp_articles(chemin_articles,chemin_references)
 
 			# conversions en DataFrames et mise en forme de ces derniers
 				# pour df_p
@@ -177,10 +174,6 @@ def pre_processing(articles, references):
 			df_a = pd.DataFrame({'auteur':dict_a.keys(), 'id_articles':dict_a.values()})
 			df_a.set_index('auteur', inplace=True)
 
-				# pour df_aa
-			df_aa = pd.DataFrame({'auteur':dict_aa.keys(), 'auteurs cités':dict_aa.values()})
-			df_aa.set_index('auteur', inplace=True)
-
 				# pour df_ref
 			df_ref = pd.DataFrame({'references':dict_ref.values(), 'id_article':dict_ref.keys()})
 			df_ref.set_index('id_article', inplace=True)
@@ -188,7 +181,6 @@ def pre_processing(articles, references):
 			#Ecriture dans des fichiers csv
 			df_p.to_csv(f'{article_auteurs}.csv',index='id_article', encoding='utf_32')
 			df_a.to_csv(f'{auteur_articles}.csv',index='auteur', encoding='utf_32')
-			df_aa.to_json(f'{auteur_auteurs_cites}.json', orient='columns')
 			df_ref.to_csv(f'{article_ref}.csv')
 
 

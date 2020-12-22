@@ -4,22 +4,16 @@ import json
 import re
 import os
 from collections import defaultdict
-from config import fp_articles, fp_ref, article_auteurs, auteur_articles, auteur_auteurs_cites, article_ref
+from config import fp_articles, fp_ref, article_auteurs, auteur_articles, article_ref
 import time
 import networkx as nx
 import matplotlib.pyplot as plt
 
 data = pd.read_csv(f'{article_auteurs}.csv',sep=',',encoding='utf-32',usecols=['id_article','auteurs'],index_col='id_article') #DF {article:auteurs}
 data2 = pd.read_csv(f'{auteur_articles}.csv',sep=',',encoding='utf-32',usecols=['auteur','id_articles'],index_col='auteur')   #DF {auteur:articles}
-#data3 = pd.read_csv(f'{auteur_auteurs_cites}.csv',sep=',',encoding='utf-32',usecols=['auteur','auteurs_cités'],index_col='auteur')   #DF {auteur:auteurs_cités}
 ref = pd.read_csv(f'{article_ref}.csv',sep=',',usecols=['id_article','references'],index_col='id_article')    #DF {article:references}
 
-with open('dict_aa.txt', 'r', encoding='utf-32') as file:
-    dict_aa = json.load(file)
-
-
-
-class Article: #OK
+class Article:
     """
     Un article = un id + une liste d'auteurs
     """
@@ -29,7 +23,7 @@ class Article: #OK
         self.auteurs=data.auteurs[self.id]
 
 
-class Auteur: #OK
+class Auteur:
 
     """
     Les éléments de la classe auteur ont deux attributs: name et liste_articles
@@ -109,7 +103,7 @@ class Communaute():
         #Construisons ensuite le dictionnaire {auteur : influence} où influence est la moyenne des influences vers l'auteur et depuis l'auteur
         for auteur in liste_auteurs:
             self.membres[auteur] = (dict_auteurs_1[auteur] + dict_auteurs_2[auteur]) / 2
-                    
+
     def graph(self):
         """
         """
