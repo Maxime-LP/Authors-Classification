@@ -177,7 +177,6 @@ def pre_processing(articles, references):
 			df_ref.to_csv(f'{article_ref}.csv')
 
 			
-			
 			print("> Fin du chargement des données.")
 
 		else:

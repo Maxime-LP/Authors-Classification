@@ -10,7 +10,7 @@ import sys
 import numpy as np
 from pre_processing import pre_processing
 if sys.argv[1]!='init': #Pour eviter d'essayer d'importer les fichiers csv lorsqu'on a pas encore init
-	from classes import Article, Auteur, Communaute
+	from classes import Auteur, Communaute
 
 
 def aide():
@@ -35,13 +35,9 @@ if __name__ == "__main__":
 
 		elif sys.argv[1] == 'cite':
 			Auteur(sys.argv[2]).cite(sys.argv[3])
-			Auteur(sys.argv[2]).cite_bis(sys.argv[3])
-
-		elif sys.argv[1] == 'influences':
-			Auteur(sys.argv[2]).influences(sys.argv[3])
 
 		elif sys.argv[1] == 'communaute':
-			Communaute(sys.argv[2]).graph(sys.argv[3])
+			Communaute(sys.argv[2],sys.argv[3]).graph()
 
 		else:
 			print('Saisie non-valide. Tapez \'./communaute aide\' pour plus d\'informations.')
