@@ -22,37 +22,30 @@ def aide():
 
 if __name__ == "__main__":
 
-	"""# commandes disponible de l'application 
-				dispatcher = {
-					'init': pre_processing,		# non-utilisé
-					'help': aide,
-					}"""
-
-
 	# selection d'une commande		
-	#try:
-	if sys.argv[1] == 'test':
-		test_df()
+	try:
+		if sys.argv[1] == 'test':
+			test_df()
 
-	if sys.argv[1] == 'aide':
-		aide()
+		if sys.argv[1] == 'aide':
+			aide()
 
-	elif sys.argv[1] == 'init':
-		pre_processing(sys.argv[2], sys.argv[3])
+		elif sys.argv[1] == 'init':
+			pre_processing(sys.argv[2], sys.argv[3])
 
-	elif sys.argv[1] == 'cite':
-		Auteur(sys.argv[2]).cite_bis(sys.argv[3])
+		elif sys.argv[1] == 'cite':
+			Auteur(sys.argv[2]).cite_bis(sys.argv[3])
 
-	elif sys.argv[1] == 'influences':
-		Auteur(sys.argv[2]).influences(sys.argv[3])
+		elif sys.argv[1] == 'influences':
+			Auteur(sys.argv[2]).influences(sys.argv[3])
 
-	elif sys.argv[1] == 'communaute':
-		Communaute(sys.argv[2]).graph(sys.argv[3])
+		elif sys.argv[1] == 'communaute':
+			Communaute(sys.argv[2]).graph(sys.argv[3])
 
-	else:
-		print('Saisie non-valide. Tapez \'./communaute aide\' pour plus d\'informations.')
+		else:
+			print('Saisie non-valide. Tapez \'./communaute aide\' pour plus d\'informations.')
 
-	#except KeyError:
-		#print('Commande invalide. Pour plus d\'informations taper \'./communaute help\'')
-	#except IndexError:
-		#print('Argument(s) invalide(s).')
+	except KeyError:
+		print('Commande invalide. Pour plus d\'informations taper \'./communaute help\'')
+	except IndexError:
+		print('Argument(s) invalide(s).')
