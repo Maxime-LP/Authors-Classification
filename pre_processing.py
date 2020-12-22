@@ -1,7 +1,7 @@
-from config import fp_articles, fp_ref, article_auteurs, auteur_articles, auteur_auteurs_cites, article_ref
-import pandas as pd
+from config import fp_articles, fp_ref, file_data_name #, article_auteurs, auteur_articles, auteur_auteurs_cites, article_ref
+#import pandas as pd
 import json
-import numpy as np
+#import numpy as np
 import re
 import os
 import platform
@@ -12,6 +12,7 @@ from pylatexenc.latex2text import LatexNodes2Text
 
 # pp := pre-processing
 
+########### début clean ############
 def clean(line_tmp):
 	"""
 	Entrées: ligne contenant les auteurs
@@ -36,11 +37,11 @@ def clean(line_tmp):
 	line_tmp = re.split(', and | and | nd | , | ,|, |,|& ',line_tmp)
 	# On supprime aussi les espaces restant dans les noms d'auteurs et traduit les caractères spéciaux écrit en LaTeX
 	line_tmp = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
-	
 	return line_tmp
+########### fin clean ############
+
 
 ########### début pp_references ############
-
 def pp_references(chemin_references):
 		"""
 		Pre_processing du fichier texte references.txt
@@ -55,18 +56,17 @@ def pp_references(chemin_references):
 		with open(f'{chemin_references}',"r") as f:
 			for line in f:
 				line = line[:-1].split(' ') #On crée une liste [id1,id2] où id1 et id2 sont de type str
-				dict_ref[line[0]].append(line[1])
+				dict_ref[int(line[0])].append(int(line[1]))
 				nb_relations += 1
 
 		# Informations sur le fichier references
-		print(f'> Le fichier references contient {nb_relations} relations.')
+		#print(f'> Le fichier references contient {nb_relations} relations.')
 
 		return dict_ref
-
 ########### fin pp_references ############
 
-########### début pp_articles ############
 
+########### début pp_articles ############
 def pp_articles(chemin_articles,chemin_references):
 	"""
 	Pre-processing du dossier article.d
@@ -74,7 +74,7 @@ def pp_articles(chemin_articles,chemin_references):
 	Sorties : 
 	"""
 
-	dict_ref=pp_references(chemin_references)
+	dict_ref = pp_references(chemin_references)
 
 	#récupération des fichiers dans l'arborescence
 	years = sorted(os.listdir(chemin_articles))
@@ -140,30 +140,29 @@ def pp_articles(chemin_articles,chemin_references):
 	# Construction du dict {auteur : auteurs_cités}
 	for auteur in dict_a.keys():
 		auteurs_cites = []
+		# pour les papiers d'un auteur
 		for papier in dict_a[auteur]:
-			papiers_cites=dict_ref[papier]
+			# on récupère les papiers cités par l'auteur
+			papiers_cites = dict_ref[int(papier)]
 			for papier_cite in papiers_cites:
 				auteurs_cites = list(set(auteurs_cites) | set(dict_p[papier_cite]))
 		try:
-			auteurs_cites=auteurs_cites.remove(auteur)
+			auteurs_cites.remove(auteur)
 		except ValueError:
 			pass
 		dict_aa[auteur] = auteurs_cites
-
 
 	# Informations sur le dossier articles
 	nb_articles = len(dict_p)
 	nb_auteurs = len(dict_a)
 	print(f'> Le dossier articles contient {nb_files} fichiers, {nb_articles} publications et {nb_auteurs} auteurs.')
 	
-	return dict_p, dict_a, dict_aa, dict_ref
-
+	return dict_aa
 ########### fin pp_articles ############
 
 
 
 ########### début pre_processing ############
-
 def pre_processing(articles, references):
 	'''
 	Pre-processing d'un nouveau jeu'de données pour l'application.
@@ -176,12 +175,12 @@ def pre_processing(articles, references):
 		if os.path.exists(chemin_references): # Test d'acces au fichier references
 
 			# créations de dictionnaires contenant les données triées
-			dict_p, dict_a, dict_aa, dict_ref = pp_articles(chemin_articles,chemin_references)
+			dict_aa = pp_articles(chemin_articles,chemin_references)
 
-			with open('dict_aa.txt', 'w',encoding='utf-32') as file:
+			with open(f'{file_data_name}.txt', 'w',encoding='utf-32') as file:
 				json.dump(dict_aa, file)
 
-			# conversions en DataFrames et mise en forme de ces derniers
+			'''# conversions en DataFrames et mise en forme de ces derniers
 				# pour df_p
 			df_p = pd.DataFrame({'id_article':dict_p.keys(), 'auteurs': dict_p.values()})
 			df_p.set_index('id_article', inplace=True)
@@ -207,12 +206,12 @@ def pre_processing(articles, references):
 
 
 			#PROBLEME : les valeurs des DF sont bien des listes, mais apres export dans des csv ce sont des str !
-
+			'''
+			
 			print("> Fin du chargement des données.")
 
 		else:
 			print(f'Problème d\'accès au fichier \'{references}\'. Veuillez vérifier le nom du fichier.')
 	else:
 		print(f'Problème d\'accès au fichier \'{articles}\'. Veuillez vérifier le nom du fichier.')
-
 ########### fin pre_processing ############
