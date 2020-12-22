@@ -137,7 +137,7 @@ class Auteur: #OK
         except ValueError:
             print('Saisir un entier naturel non nul pour la profondeur.')
 
-        return
+        return auteurs_cites
 
 
 class Communaute():
@@ -163,10 +163,9 @@ class Communaute():
         Construction du graphe de la communauté
         """
         g = nx.Graph()
-        dict_auteur = self.auteur.cite(N)
-        auteurs_cites = dict_auteur.keys()
-        for n in range(1,N):
-            g.add_edges_from([(self.auteur.name, i) for i in auteurs_cites])
+
+        for auteur in self.membres.keys():
+            g.add_node(auteur)
 
         plt.figure()
         nx.draw(g)
