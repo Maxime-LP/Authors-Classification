@@ -24,9 +24,6 @@ if __name__ == "__main__":
 
 	# selection d'une commande		
 	try:
-		if sys.argv[1] == 'test':
-			test_df()
-
 		if sys.argv[1] == 'aide':
 			aide()
 

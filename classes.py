@@ -12,7 +12,6 @@ data2 = pd.read_csv(f'{auteur_articles}.csv',sep=',',encoding='utf-32',usecols=[
 ref = pd.read_csv(f'{article_ref}.csv',sep=',',usecols=['id_article','references'],index_col='id_article')    #DF {article:references}
 
 class Auteur:
-
 	"""
 	Les éléments de la classe auteur ont deux attributs: name et liste_articles
 	"""
@@ -66,6 +65,8 @@ class Auteur:
 		return quoted_authors
 
 
+
+
 class Communaute():
 
 	def __init__(self, auteur, profondeur):
@@ -75,7 +76,6 @@ class Communaute():
 		
 		#Dictionnaire des auteurs cités par l'auteur central
 		dict_cite=self.auteur_central.cite(self.profondeur)  #C'est un defaultdict(lambda: 0) donc si un élément e n'y est pas on adict_cite[e]=0
-
 		#Dictionnaire des auteurs de dict_cite qui citent également l'auteur central
 		dict_est_cite_par = defaultdict(lambda: 0)
 
@@ -92,22 +92,13 @@ class Communaute():
 		
 
 	def graph(self):
-		"""
-		"""
 		g = nx.Graph()
 		#On trace les relations entre l'auteur central et les membres de la communautés (pour le moment j'utilise un attribut weight)
 		g.add_edges_from([(self.auteur_central.name,membre_i,{'weight': self.membres[membre_i]}) for membre_i in self.membres.keys()])
-
-		plt.figure()
 		nx.draw(g,with_labels=True)
 		plt.show()
-		plt.legend()
-		return
 
-"""
-test=Auteur('C.Itzykson')
-print(test.cite(2))
-"""
+		return
 
 test=Communaute('C.Itzykson',3)
 print(test.membres)
