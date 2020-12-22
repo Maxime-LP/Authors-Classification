@@ -132,7 +132,7 @@ class Auteur: #OK
         except ValueError:
             print('Saisir un entier naturel non nul pour la profondeur.')
 
-        return #auteurs_cites
+        return auteurs_cites
 
 
 
@@ -242,5 +242,6 @@ class Communaute():
         mat_adj.to_csv('mat_adj.csv')
         return'''
 test=Auteur('C.Itzykson')
-test.cite(3)
+#test.cite(1)
 
+test.cite_bis(1)

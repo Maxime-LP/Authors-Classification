@@ -145,7 +145,7 @@ def pp_articles(chemin_articles,chemin_references):
 			for papier_cite in papiers_cites:
 				auteurs_cites = list(set(auteurs_cites) | set(dict_p[papier_cite]))
 		try:
-			auteurs_cites.remove(auteur)
+			auteurs_cites=auteurs_cites.remove(auteur)
 		except ValueError:
 			pass
 		dict_aa[auteur] = auteurs_cites
@@ -198,7 +198,6 @@ def pre_processing(articles, references):
 				# pour df_ref
 			df_ref = pd.DataFrame({'references':dict_ref.values(), 'id_article':dict_ref.keys()})
 			df_ref.set_index('id_article', inplace=True)
-			df_ref.sort_index(axis=0, inplace=True)
 
 			#Ecriture dans des fichiers csv
 			df_p.to_csv(f'{article_auteurs}.csv',index='id_article', encoding='utf_32')
