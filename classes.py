@@ -184,8 +184,18 @@ class Communaute():
     #mat_adj = pd.DataFrame()
 
     def __init__(self, auteur, profondeur):
+        self.auteur_central = Auteur(auteur)
         self.auteur = Auteur(auteur)
         self.profondeur = profondeur
+        self.membres = {}
+        
+        dict_auteurs_1=self.auteur_central.cite(self.profondeur)
+        dict_auteurs_2=self.auteur_central.influences(self.profondeur)
+        #On a les liste des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
+        liste_auteurs = list(set(dict_auteurs_1.keys()) & set(dict_auteurs_2.keys()))
+        #Construisons ensuite le dictionnaire {auteur : influence} où influence est la moyenne des influences vers l'auteur et depuis l'auteur
+        for auteur in liste_auteurs:
+            self.membres[auteur] = (dict_auteurs_1[auteur] + dict_auteurs_2[auteur]) / 2
                     
     def graph(self):
         """
