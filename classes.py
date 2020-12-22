@@ -97,7 +97,8 @@ class Communaute():
 		plt.show()
 
 		return
-
+"""
 test=Communaute('C.Itzykson',3)
 print(test.membres)
 test.graph()
+"""
