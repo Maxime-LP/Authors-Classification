@@ -1,16 +1,22 @@
 import pandas as pd
 import numpy as np
+import json
 import re
 import os
 from collections import defaultdict
-from config import fp_articles, fp_ref, article_auteurs, auteur_articles, article_ref
+from config import fp_articles, fp_ref, article_auteurs, auteur_articles, auteur_auteurs_cites, article_ref
 import time
 import networkx as nx
 import matplotlib.pyplot as plt
 
-data = pd.read_csv(f'{article_auteurs}.csv',sep=',',encoding='utf-32',usecols=['id_article','auteurs'],index_col='id_article') #DF Article Auteurs
-data2 = pd.read_csv(f'{auteur_articles}.csv',sep=',',encoding='utf-32',usecols=['auteur','id_articles'],index_col='auteur')   #DF Auteur Articles
-ref = pd.read_csv(f'{article_ref}.csv',sep=',',usecols=['id_article','references'],index_col='id_article')    #DF Article ref
+data = pd.read_csv(f'{article_auteurs}.csv',sep=',',encoding='utf-32',usecols=['id_article','auteurs'],index_col='id_article') #DF {article:auteurs}
+data2 = pd.read_csv(f'{auteur_articles}.csv',sep=',',encoding='utf-32',usecols=['auteur','id_articles'],index_col='auteur')   #DF {auteur:articles}
+#data3 = pd.read_csv(f'{auteur_auteurs_cites}.csv',sep=',',encoding='utf-32',usecols=['auteur','auteurs_cités'],index_col='auteur')   #DF {auteur:auteurs_cités}
+ref = pd.read_csv(f'{article_ref}.csv',sep=',',usecols=['id_article','references'],index_col='id_article')    #DF {article:references}
+
+with open('dict_aa.txt', 'r', encoding='utf-32') as file:
+        dict_aa = json.load(file)
+
 
 
 class Article: #OK
@@ -24,14 +30,15 @@ class Article: #OK
 
 
 class Auteur: #OK
+
     """
     Les éléments de la classe auteur ont deux attributs: name et liste_articles
     """
 
     def __init__(self, name):
-        self.name=name
+        self.name = name
         try:
-            self.liste_articles=data2.id_articles[f'{self.name}']
+            self.liste_articles = data2.id_articles[f'{self.name}']
         except KeyError:
             pass
     
@@ -86,6 +93,52 @@ class Auteur: #OK
         print(quoted_authors.keys())
         return quoted_authors
 
+
+
+    def influences(self, N=1):
+        """
+        Entrées : nom d'un auteur, profondeur des citations
+        Sorties : dictionnaire de la forme {auteur : auteurs_cités}
+        """
+
+        auteurs_cites = {}
+
+        try:
+            # on veut une profondeur d'au moins 1
+            if int(N) <= 0:
+                raise ValueError
+
+            N = int(N)
+            
+            # dict final
+            auteurs_influence = defaultdict(float)
+            # list des auteurs influencé au rank précédant
+            auteurs_rang_courant = [self.name]
+            # liste des auteurs à tester au prochain rang
+            auteurs_rang_suivant = []
+
+            # boucle sur les profondeurs
+            for k in range(1, N+1):
+                for auteur_courant in auteurs_rang_courant:
+                    for auteur in dict_aa.keys():
+                        # test si l'auteur courant influence l'auteur
+                        if auteur_courant in dict_aa[auteur]:
+                            # y réfléchir
+                            if auteur != self.name:
+                                auteurs_rang_suivant.append(auteur)
+
+                            # ajout d'influence en fonction de la profondeur
+                            auteurs_influence[auteur]+= 1/k
+                # on supprime les doublons
+                auteurs_rang_courant = list(set(auteurs_rang_suivant))
+                auteurs_rang_suivant = []
+            
+            #print(auteurs_influence)
+
+        except ValueError:
+            print('Saisir un entier naturel non nul pour la profondeur.')
+
+        return
 
 
 class Communaute():
@@ -144,10 +197,10 @@ class Communaute():
 
 
 
-test=Auteur('C.Itzykson')
+"""test=Auteur('C.Itzykson')
 print(test.cite(3))
 
 test=Communaute('C.Itzykson',3)
 test.mat_adj(3)
-print(test.mat_adj(3))
+print(test.mat_adj(3))"""
 

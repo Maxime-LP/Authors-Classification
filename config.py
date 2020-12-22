@@ -1,10 +1,10 @@
 # chemin d'accès aux dossier contenant les articles
-fp_articles = r'C:\Users\Utilisateur\Desktop'
+fp_articles = r'/home/amait/Documents/python/POO-Projet/'
 # Maxime : r'C:\Users\lepau\OneDrive\Desktop' / r'C:\Users\Utilisateur\Desktop'
 # Adrien : r'/home/amait/Documents/python/POO-Projet/'
 
 # chemin d'accès aux dossier contenant les articles
-fp_ref = r'C:\Users\Utilisateur\Desktop'
+fp_ref = r'/home/amait/Documents/python/POO-Projet/'
 # Maxime : r'C:\Users\lepau\OneDrive\Desktop' / r'C:\Users\Utilisateur\Desktop'
 # Adrien : r'/home/amait/Documents/python/POO-Projet/'
 
