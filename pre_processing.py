@@ -62,8 +62,7 @@ def pp_articles(chemin_articles):
 	# début du pre-processing
 	dict_p = defaultdict(list)
 	dict_a = defaultdict(list)
-	dict_aa = defaultdict(list)
-	
+
 	progression=1
 
 	#construction du dict avec les id des articles en clés
@@ -114,7 +113,7 @@ def pp_articles(chemin_articles):
 	nb_auteurs = len(dict_a)
 	print(f'> Le dossier articles contient {nb_files} fichiers, {nb_articles} publications et {nb_auteurs} auteurs.')
 	
-	return dict_a,dict_p,dict_ref
+	return dict_a,dict_p
 ########### fin pp_articles ############
 
 ########### début pp_references ############
@@ -155,10 +154,10 @@ def pre_processing(articles, references):
 		if os.path.exists(chemin_references): # Test d'acces au fichier references
 
 			# créations de dictionnaires contenant les données triées
-			dict_a,dict_p,dict_ref = pp_articles(chemin_articles)
+			dict_a,dict_p = pp_articles(chemin_articles)
 			dict_ref = pp_references(chemin_references)
 
-			'''# conversions en DataFrames et mise en forme de ces derniers
+			# conversions en DataFrames et mise en forme de ces derniers
 				# pour df_p
 			df_p = pd.DataFrame({'id_article':dict_p.keys(), 'auteurs': dict_p.values()})
 			df_p.set_index('id_article', inplace=True)
@@ -177,7 +176,7 @@ def pre_processing(articles, references):
 			df_a.to_csv(f'{auteur_articles}.csv',index='auteur', encoding='utf_32')
 			df_ref.to_csv(f'{article_ref}.csv')
 
-			'''
+			
 			
 			print("> Fin du chargement des données.")
 
