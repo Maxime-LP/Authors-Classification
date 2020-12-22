@@ -15,7 +15,7 @@ data2 = pd.read_csv(f'{auteur_articles}.csv',sep=',',encoding='utf-32',usecols=[
 ref = pd.read_csv(f'{article_ref}.csv',sep=',',usecols=['id_article','references'],index_col='id_article')    #DF {article:references}
 
 with open('dict_aa.txt', 'r', encoding='utf-32') as file:
-        dict_aa = json.load(file)
+    dict_aa = json.load(file)
 
 
 
@@ -91,7 +91,7 @@ class Auteur: #OK
             print('Saisir un entier naturel pour la profondeur.')
 
         print(quoted_authors)
-        return quoted_authors
+        return #quoted_authors
 
     def cite_bis(self, N=1):
 
@@ -132,7 +132,7 @@ class Auteur: #OK
         except ValueError:
             print('Saisir un entier naturel non nul pour la profondeur.')
 
-        return auteurs_cites
+        return #auteurs_cites
 
 
 
@@ -241,7 +241,6 @@ class Communaute():
                     pass
         mat_adj.to_csv('mat_adj.csv')
         return'''
-
 test=Auteur('C.Itzykson')
 test.cite(3)
 
