@@ -158,7 +158,7 @@ class Communaute():
             self.membres[auteur] = (dict_auteurs_1[auteur] + dict_auteurs_2[auteur]) / 2
 
 
-    def graph(self, N):
+    def graph(self):
         """
         Construction du graphe de la communauté
         """
@@ -208,8 +208,8 @@ class Communaute():
 
 """test=Auteur('C.Itzykson')
 print(test.cite(3))
+"""
 
 test=Communaute('C.Itzykson',3)
-test.mat_adj(3)
-print(test.mat_adj(3))"""
+test.graph()
 
