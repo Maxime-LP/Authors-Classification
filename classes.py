@@ -127,32 +127,21 @@ class Auteur: #OK
                 for papier in papiers_rang_courant:
                     # test si le papier cite un autre papier
                     if papier in dict_ref.keys():
+                        #print(papier, 'cite')
                         for papier_cite in dict_ref[papier]:
                             # on ajoute le papier cité pour le rang k+1
                             papiers_rang_suivant.append(papier_cite)
                             for auteur in dict_p[papier_cite]:
+                                #print(papier_cite,':',auteur)
                                 # on ajoute le nom d'un auteur à chaque fois qu'il apparait dans un un papier cité
                                 auteurs_cites_rang_k.append(auteur)
 
-                    for auteur in auteurs_cites_rang_k:
-                        if auteur != self.name:
-                            auteurs_cites[auteur] += 1/k
-            print(auteurs_cites)
-                
-                # on les ajoute pour la profondeur k+1
-                #papiers_rang_suivant.append(papiers_cites)
-                        #print(papiers_cites)
+                for auteur in auteurs_cites_rang_k:
+                    if auteur != self.name:
+                        auteurs_cites[auteur] += 1/k
+                print(auteur,':',auteurs_cites)
+            print(dict_p['9201001'])
 
-
-
-            '''for papier in dict_a[:
-                    for auteur in dict_a[auteur_courant]:
-                        # ajout d'influence en fonction de la profondeur
-                        auteurs_cites[auteur]+= 1/k
-                        auteurs_rang_suivant.append(auteur)
-                # on supprime les doublons
-                auteurs_rang_courant = list(set(auteurs_rang_suivant))
-                auteurs_rang_suivant = []'''
 
             #print(auteurs_cites)
             return #auteurs_cites
