@@ -129,6 +129,7 @@ class Auteur: #OK
 			return auteurs_influences
 
 
+
 class Communaute():
 
 	#mat_adj = pd.DataFrame()
@@ -139,34 +140,22 @@ class Communaute():
 		self.profondeur = profondeur
 		self.membres = {}
 		
-		dict_auteurs_1=self.auteur_central.cite(self.profondeur)
-		dict_auteurs_2=self.auteur_central.influences(self.profondeur)
-		#On a les liste des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
-		liste_auteurs = list(set(dict_auteurs_1.keys()) & set(dict_auteurs_2.keys()))
-		#Construisons ensuite le dictionnaire {auteur : influence} où influence est la moyenne des influences vers l'auteur et depuis l'auteur
-		for auteur in liste_auteurs:
-			self.membres[auteur] = (dict_auteurs_1[auteur] + dict_auteurs_2[auteur]) / 2
+		dict_cite=self.auteur_central.cite(self.profondeur)
+		dict_influences=self.auteur_central.influences(self.profondeur)
 
-	def __init__V2(self, auteur, profondeur):
-		self.auteur_central = Auteur(auteur)
-		self.profondeur = profondeur
-		self.membres = {}
-		
-		#Dictionnaire des auteurs cités par l'auteur central
-		dict_cite=self.auteur_central.cite(self.profondeur)  #C'est un defaultdict(lambda: 0) donc si un élément e n'y est pas on adict_cite[e]=0
-		#Dictionnaire des auteurs de dict_cite qui citent également l'auteur central
-		dict_est_cite_par = defaultdict(lambda: 0)
-
+		""" #Ou on peut aussi utiliser cette méthode plus rapide pour construire self.membre
+		dict_influences = defaultdict(lambda: 0)
 		for auteur in dict_cite.keys():
-			tmp=Auteur(auteur).cite(self.profondeur)  #C'est aussi un defaultdict(lambda: 0), le test !=0 est plus rapide que le test in keys()
+			tmp=Auteur(auteur).cite(self.profondeur)  #C'est un defaultdict(lambda: 0), le test !=0 est plus rapide que le test in keys()
 			if tmp[self.auteur_central.name]!=0:
-				dict_est_cite_par[auteur]+=tmp[self.auteur_central.name]
+				dict_influences[auteur]+=tmp[self.auteur_central.name]
+		"""
 
-		#On a les listes des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
-		liste_auteurs = list(set(dict_cite.keys()) & set(dict_est_cite_par.keys()))
+		#On a les liste des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
+		liste_auteurs = list(set(dict_cite.keys()) & set(dict_influences.keys()))
 		#Construisons ensuite le dictionnaire {auteur : influence} où influence est la moyenne des influences vers l'auteur et depuis l'auteur
 		for auteur in liste_auteurs:
-			self.membres[auteur] = (dict_cite[auteur] + dict_est_cite_par[auteur]) / 2
+			self.membres[auteur] = (dict_cite[auteur] + dict_influences[auteur]) / 2
 					
 	def graph(self):
 		"""
