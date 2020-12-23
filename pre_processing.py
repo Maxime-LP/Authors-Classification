@@ -50,17 +50,23 @@ def pp_references(chemin_references):
 		"""
 
 		nb_relations = 0
-		dict_ref = defaultdict(list)
+		# dict {papier_qui_cite : [papier_cite1, ...]}
+		dict_ref_cite = defaultdict(list)
+		# dict {papier_cite : [papier_qui_cite1, ...]}
+		dict_ref_influence = defaultdict(list)
 
 		# récupération et pre-processing du fichier
 		with open(f'{chemin_references}',"r") as f:
 			for line in f:
+				#On crée une liste [id1,id2] avec type(idx)=str
 				line = line[:-1].split(' ')
-				#On crée une liste [id1,id2] où id1 et id2 sont de type str
-				dict_ref[line[0]].append(line[1]) #####
+				
+				dict_ref_cite[line[0]].append(line[1])
+				#On crée une liste [id1,id2] avec type(idx)=str
+				dict_ref_influence[line[1]].append(line[0])
 				nb_relations += 1
 
-		return dict_ref
+		return dict_ref_cite #, dict_ref_influence
 ########### fin pp_references ############
 
 
@@ -72,6 +78,7 @@ def pp_articles(chemin_articles,chemin_references):
 	Sorties : 
 	"""
 
+	# on recupère dict_ref_cite
 	dict_ref = pp_references(chemin_references)
 
 	#récupération des fichiers dans l'arborescence
@@ -88,8 +95,9 @@ def pp_articles(chemin_articles,chemin_references):
 
 	# début du pre-processing
 	dict_p = defaultdict(list)
+	# dict {auteur : [papier1, ...]}
 	dict_a = defaultdict(list)
-	dict_aa = defaultdict(list)
+	dict_aa = defaultdict(list) # à supprimer et tout ce qui s'y rapporte
 	
 	progression=1
 
@@ -124,18 +132,18 @@ def pp_articles(chemin_articles,chemin_references):
 			if progression_pct%10 == 0 :
 				if platform.system() == "Windows":
 					os.system("cls")
-				elif platform.system() == "Linux":
+				elif platform.system() in ["Darwin","Linux"]:
 					os.system("clear")
 				print(f'Progression : {progression_pct} %')
 			progression+=1
 	
-	# Construction du dict {auteur : papiers}
+	# construction dict_a
 	for paper in dict_p.keys():
 		authors = dict_p[paper]
 		for author in authors:
 			dict_a[author].append(paper)
 
-	# Construction du dict {auteur : auteurs_cités}
+	# à supprimer
 	for auteur in dict_a.keys():
 		auteurs_cites = []
 		# pour les papiers d'un auteur
