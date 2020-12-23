@@ -14,8 +14,14 @@ import matplotlib.pyplot as plt
 #data3 = pd.read_csv(f'{auteur_auteurs_cites}.csv',sep=',',encoding='utf-32',usecols=['auteur','auteurs_cités'],index_col='auteur')   #DF {auteur:auteurs_cités}
 #ref = pd.read_csv(f'{article_ref}.csv',sep=',',usecols=['id_article','references'],index_col='id_article')    #DF {article:references}
 
-with open(f'{file_data_name}.txt', 'r', encoding='utf-32') as file:
+with open('dict_aa.json', 'r', encoding='utf-32') as file:
     dict_aa = json.load(file)
+with open('dict_a.json', 'r', encoding='utf-32') as file:
+    dict_a = json.load(file)
+with open('dict_p.json', 'r', encoding='utf-32') as file:
+    dict_p = json.load(file)
+with open('dict_ref.json', 'r', encoding='utf-8') as file:
+    dict_ref = json.load(file)
 
 
 '''class Article: #OK
@@ -41,7 +47,7 @@ class Auteur: #OK
         except KeyError:
             pass'''
     
-    '''def cite(self, N=1):
+    def citex(self, N=1):
         """
         Retourne un dict {auteur : influence}
         L'argument influence détermine si on veut avoir les influences des auteurs
@@ -90,7 +96,7 @@ class Auteur: #OK
             print('Saisir un entier naturel pour la profondeur.')
 
         #print(quoted_authors)
-        #return quoted_authors'''
+        #return quoted_authors
 
     def cite(self, N=1):
         """
@@ -104,24 +110,33 @@ class Auteur: #OK
 
         if not int(N) > 0:
             print('Saisir un entier naturel non nul pour la profondeur.')
+        
         else:
             # dict final
             auteurs_cites = defaultdict(float)
-            # list des auteurs influencé au rank précédant
-            auteurs_rang_courant = [self.name]
-            # liste des auteurs à tester au prochain rang
-            auteurs_rang_suivant = []
+            # liste des papiers à tester au prochain rang
+            papiers_rang_suivant = dict_a[self.name]
 
             # boucle sur les profondeurs
             for k in range(1, N+1):
-                for auteur_courant in auteurs_rang_courant:
-                    for auteur in dict_aa[auteur_courant]:
-                        # ajout d'influence en fonction de la profondeur
-                        auteurs_cites[auteur]+= 1/k
-                        auteurs_rang_suivant.append(auteur)
-                # on supprime les doublons
-                auteurs_rang_courant = list(set(auteurs_rang_suivant))
-                auteurs_rang_suivant = []
+                # liste des papiers cités au rang courant
+                papiers_rang_courant = papiers_rang_suivant
+                papiers_rang_suivant = []
+                auteurs_cites_rang_k = []
+
+                for papier in papiers_rang_courant:
+                    # test si le papier cite un autre papier
+                    if papier in dict_ref.keys():
+                        for papier_cite in dict_ref[papier]:
+                            # on ajoute le papier cité pour le rang k+1
+                            papiers_rang_suivant.append(papier_cite)
+                            for auteur in dict_p[papier_cite]:
+                                # on ajoute le nom d'un auteur à chaque fois qu'il apparait dans un un papier cité
+                                auteurs_cites_rang_k.append(auteur)
+
+                for auteur in auteurs_cites_rang_k:
+                    if auteur != self.name:
+                        auteurs_cites[auteur] += 1/k
 
             #print(auteurs_cites)
             return auteurs_cites
