@@ -34,7 +34,7 @@ if __name__ == "__main__":
 		pre_processing(sys.argv[2], sys.argv[3])
 
 	elif sys.argv[1] == 'cite':
-		Auteur(sys.argv[2]).cite(sys.argv[3])
+		print(Auteur(sys.argv[2]).cite(sys.argv[3]))
 
 	elif sys.argv[1] == 'influences':
 		print(Auteur(sys.argv[2]).influences(sys.argv[3]))
