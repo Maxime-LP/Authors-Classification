@@ -9,7 +9,8 @@ articles et d'un fichier contenant les références des articles.
 import sys
 import numpy as np
 from pre_processing import pre_processing
-if sys.argv[1]!='init': #Pour eviter d'essayer d'importer les fichiers csv lorsqu'on a pas encore init
+# importation les fichiers json uniquement après avoir init
+if sys.argv[1] != 'init':
 	from classes import Auteur, Communaute #, Article
 
 
