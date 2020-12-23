@@ -55,10 +55,12 @@ def pp_references(chemin_references):
 		# récupération et pre-processing du fichier
 		with open(f'{chemin_references}',"r") as f:
 			for line in f:
-				line = line[:-1].split(' ')
-				#On crée une liste [id1,id2] où id1 et id2 sont de type str
-				dict_ref[line[0]].append(line[1]) #####
+				line = line[:-1].split(' ') #On crée une liste [id1,id2] où id1 et id2 sont de type str
+				dict_ref[int(line[0])].append(int(line[1]))
 				nb_relations += 1
+
+		# Informations sur le fichier references
+		#print(f'> Le fichier references contient {nb_relations} relations.')
 
 		return dict_ref
 ########### fin pp_references ############
@@ -102,7 +104,7 @@ def pp_articles(chemin_articles,chemin_references):
 					if nb_line_author < 1:
 						if line[:7]=="Paper: ":
 							# récupère id de l'article
-							tmp_paper = line[14:21] #####
+							tmp_paper = int(line[14:21])
 
 						if line[:9] == "Authors: ":
 							# récupère nom des auteurs dans une liste
@@ -155,7 +157,7 @@ def pp_articles(chemin_articles,chemin_references):
 	nb_auteurs = len(dict_a)
 	print(f'> Le dossier articles contient {nb_files} fichiers, {nb_articles} publications et {nb_auteurs} auteurs.')
 	
-	return dict_a, dict_p, dict_aa
+	return dict_aa
 ########### fin pp_articles ############
 
 
@@ -173,16 +175,10 @@ def pre_processing(articles, references):
 		if os.path.exists(chemin_references): # Test d'acces au fichier references
 
 			# créations de dictionnaires contenant les données triées
-			dict_a, dict_p, dict_aa = pp_articles(chemin_articles,chemin_references)
-			dict_ref = pp_references(chemin_references)
-			with open(f'dict_a.json', 'w',encoding='utf-32') as file:
-				json.dump(dict_a, file)
-			with open(f'dict_p.json', 'w',encoding='utf-32') as file:
-				json.dump(dict_p, file)
-			with open(f'dict_aa.json', 'w',encoding='utf-32') as file:
+			dict_aa = pp_articles(chemin_articles,chemin_references)
+
+			with open(f'{file_data_name}.txt', 'w',encoding='utf-32') as file:
 				json.dump(dict_aa, file)
-			with open(f'dict_ref.json', 'w',encoding='utf-8') as file:
-				json.dump(dict_ref, file)
 
 			'''# conversions en DataFrames et mise en forme de ces derniers
 				# pour df_p
