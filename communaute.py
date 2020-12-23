@@ -40,7 +40,7 @@ if __name__ == "__main__":
 		print(Auteur(sys.argv[2]).influences(sys.argv[3]))
 
 	elif sys.argv[1] == 'communaute':
-		Communaute(sys.argv[2]).graph(sys.argv[3])
+		Communaute(sys.argv[2],sys.argv[3]).graph()
 
 	else:
 		print('Saisie non-valide. Tapez \'./communaute aide\' pour plus d\'informations.')
