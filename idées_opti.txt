@@ -1,0 +1,5 @@
+####################################################
+######      Idées d'optimisation             #######
+####################################################
+
+- faire une pretty print pour les fonctions cite et influences
