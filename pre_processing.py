@@ -60,10 +60,8 @@ def pp_references(chemin_references):
 			for line in f:
 				#On crée une liste [id1,id2] avec type(idx)=str
 				line = line[:-1].split(' ')
-				
 				dict_ref_cite[line[0]].append(line[1])
-				#On crée une liste [id1,id2] avec type(idx)=str
-				dict_ref_influence[line[1]].append(line[0])
+				dict_ref_influence[line[1]].append(line[0]) # avec ou sans 30s
 				nb_relations += 1
 
 		return dict_ref_cite #, dict_ref_influence
