@@ -149,3 +149,7 @@ class Communaute():
         nx.draw(g, with_labels=True)
         plt.show()
         return
+
+
+# => Pour transformer un graph networkx en graph ploly:
+#    https://medium.com/@anand0427/network-graph-with-at-t-data-using-plotly-a319f9898a02
