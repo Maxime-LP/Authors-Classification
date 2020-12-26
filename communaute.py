@@ -37,8 +37,8 @@ if __name__ == "__main__":
 	elif sys.argv[1] == 'cite':
 		print(Auteur(sys.argv[2]).cite(sys.argv[3]))
 
-	elif sys.argv[1] == 'influences':
-		print(Auteur(sys.argv[2]).influences(sys.argv[3]))
+	elif sys.argv[1] == 'est_cite':
+		print(Auteur(sys.argv[2]).est_cite(sys.argv[3]))
 
 	elif sys.argv[1] == 'communaute':
 		Communaute(sys.argv[2],sys.argv[3]).graph()

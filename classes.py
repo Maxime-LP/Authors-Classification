@@ -14,14 +14,14 @@ import matplotlib.pyplot as plt
 #data3 = pd.read_csv(f'{auteur_auteurs_cites}.csv',sep=',',encoding='utf-32',usecols=['auteur','auteurs_cités'],index_col='auteur')   #DF {auteur:auteurs_cités}
 #ref = pd.read_csv(f'{article_ref}.csv',sep=',',usecols=['id_article','references'],index_col='id_article')    #DF {article:references}
 
-with open('dict_aa.json', 'r', encoding='utf-32') as file:
-    dict_aa = json.load(file)
 with open('dict_a.json', 'r', encoding='utf-32') as file:
     dict_a = json.load(file)
 with open('dict_p.json', 'r', encoding='utf-32') as file:
     dict_p = json.load(file)
-with open('dict_ref.json', 'r', encoding='utf-8') as file:
-    dict_ref = json.load(file)
+with open('dict_ref_cite.json', 'r', encoding='utf-8') as file:
+    dict_cite = json.load(file)
+with open('dict_ref_influence.json', 'r', encoding='utf-8') as file:
+    dict_est_cite = json.load(file)
 
 
 '''class Article: #OK
@@ -74,7 +74,7 @@ class Auteur: #OK
 
                 for papier in papiers_rang_courant:
                     try : # exception déclenchée si le papiet n'en cite aucun autre
-                        for papier_cite in dict_ref[papier]:
+                        for papier_cite in dict_cite[papier]:
                             # on ajoute le papier cité pour le rang k+1
                             papiers_rang_suivant.append(papier_cite)
                             for auteur in dict_p[papier_cite]:
@@ -87,10 +87,10 @@ class Auteur: #OK
 
             return auteurs_cites
 
-    def influences(self, N=1):
+    def est_cite(self, N=1):
         """
-        Entrés:
-        Sorties: 
+        Entrés:nom d'un auteur (self), profondeur des citations
+        Sorties : dictionnaire de la forme {auteur_influencé : influence_de_self_sur_l'auteur}
         """
         try:
             N = int(N)
@@ -102,7 +102,7 @@ class Auteur: #OK
         
         else:
             # dict final
-            auteurs_influences = defaultdict(lambda:0) #Par défaut le dict associe un 0 donc si un objet e n'y est pas, auteurs_cites[e]=0. Plus rapide à tester qu'un test in
+            auteurs_qui_citent = defaultdict(lambda:0) #Par défaut le dict associe un 0 donc si un objet e n'y est pas, auteurs_cites[e]=0. Plus rapide à tester qu'un test in
             # liste des papiers à tester au prochain rang
             papiers_rang_suivant = dict_a[self.name]
 
@@ -113,9 +113,18 @@ class Auteur: #OK
                 papiers_rang_suivant = []
 
                 for papier in papiers_rang_courant:
-                    pass
+                    try:
+                        for papier_qui_cite in dict_est_cite[papier]:
+                            papiers_rang_suivant.append(papier_qui_cite)
+                            for auteur in dict_p[papier_qui_cite]:
+                                # on ajoute le nom d'un auteur à chaque fois qu'il apparait dans un un papier cité
+                                if auteur!=self.name and auteur!="":
+                                    #
+                                    auteurs_qui_citent[auteur] += 1/k
+                    except KeyError:
+                        pass
 
-        return
+        return auteurs_qui_citent
 
 
 class Communaute():

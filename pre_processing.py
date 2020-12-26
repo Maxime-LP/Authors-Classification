@@ -64,7 +64,7 @@ def pp_references(chemin_references):
 				dict_ref_influence[line[1]].append(line[0]) # avec ou sans 30s
 				nb_relations += 1
 
-		return dict_ref_cite #, dict_ref_influence
+		return dict_ref_cite , dict_ref_influence
 ########### fin pp_references ############
 
 
@@ -77,7 +77,7 @@ def pp_articles(chemin_articles,chemin_references):
 	"""
 
 	# on recupère dict_ref_cite
-	dict_ref = pp_references(chemin_references)
+	#dict_ref = pp_references(chemin_references) # plus besoin
 
 	#récupération des fichiers dans l'arborescence
 	years = sorted(os.listdir(chemin_articles))
@@ -95,7 +95,7 @@ def pp_articles(chemin_articles,chemin_references):
 	dict_p = defaultdict(list)
 	# dict {auteur : [papier1, ...]}
 	dict_a = defaultdict(list)
-	dict_aa = defaultdict(list) # à supprimer et tout ce qui s'y rapporte
+	#dict_aa = defaultdict(list) # à supprimer et tout ce qui s'y rapporte
 	
 	progression=1
 
@@ -142,7 +142,7 @@ def pp_articles(chemin_articles,chemin_references):
 			dict_a[author].append(paper)
 
 	# à supprimer
-	for auteur in dict_a.keys():
+	'''for auteur in dict_a.keys():
 		auteurs_cites = []
 		# pour les papiers d'un auteur
 		for papier in dict_a[auteur]:
@@ -154,14 +154,14 @@ def pp_articles(chemin_articles,chemin_references):
 			auteurs_cites.remove(auteur)
 		except ValueError:
 			pass
-		dict_aa[auteur] = auteurs_cites
+		dict_aa[auteur] = auteurs_cites'''
 
 	# Informations sur le dossier articles
 	nb_articles = len(dict_p)
 	nb_auteurs = len(dict_a)
 	print(f'> Le dossier articles contient {nb_files} fichiers, {nb_articles} publications et {nb_auteurs} auteurs.')
 	
-	return dict_a, dict_p, dict_aa
+	return dict_a, dict_p #, dict_aa
 ########### fin pp_articles ############
 
 
@@ -169,7 +169,7 @@ def pp_articles(chemin_articles,chemin_references):
 ########### début pre_processing ############
 def pre_processing(articles, references):
 	'''
-	Pre-processing d'un nouveau jeu'de données pour l'application.
+	Pre-processing d'un nouveau jeu de données pour l'application.
 	'''
 
 	chemin_articles = fp_articles + articles
@@ -179,16 +179,16 @@ def pre_processing(articles, references):
 		if os.path.exists(chemin_references): # Test d'acces au fichier references
 
 			# créations de dictionnaires contenant les données triées
-			dict_a, dict_p, dict_aa = pp_articles(chemin_articles,chemin_references)
-			dict_ref = pp_references(chemin_references)
+			dict_a, dict_p = pp_articles(chemin_articles,chemin_references)
+			dict_ref_cite, dict_ref_influence = pp_references(chemin_references)
 			with open(f'dict_a.json', 'w',encoding='utf-32') as file:
 				json.dump(dict_a, file)
 			with open(f'dict_p.json', 'w',encoding='utf-32') as file:
 				json.dump(dict_p, file)
-			with open(f'dict_aa.json', 'w',encoding='utf-32') as file:
-				json.dump(dict_aa, file)
-			with open(f'dict_ref.json', 'w',encoding='utf-8') as file:
-				json.dump(dict_ref, file)
+			with open(f'dict_ref_cite.json', 'w',encoding='utf-8') as file:
+				json.dump(dict_ref_cite, file)
+			with open(f'dict_ref_influence.json', 'w',encoding='utf-8') as file:
+				json.dump(dict_ref_influence, file)
 
 			'''# conversions en DataFrames et mise en forme de ces derniers
 				# pour df_p
