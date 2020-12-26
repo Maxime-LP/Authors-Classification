@@ -1,51 +1,32 @@
-#import pandas as pd
-#import numpy as np
 import json
 import re
 import os
 from collections import defaultdict
-from config import fp_articles, fp_ref, file_data_name #article_auteurs, auteur_articles, auteur_auteurs_cites, article_ref
+from config import fp_articles, fp_ref, nom_dict 
 import time
 import networkx as nx
 import matplotlib.pyplot as plt
+from math import sqrt
 
-#data = pd.read_csv(f'{article_auteurs}.csv',sep=',',encoding='utf-32',usecols=['id_article','auteurs'],index_col='id_article') #DF {article:auteurs}
-#data2 = pd.read_csv(f'{auteur_articles}.csv',sep=',',encoding='utf-32',usecols=['auteur','id_articles'],index_col='auteur')   #DF {auteur:articles}
-#data3 = pd.read_csv(f'{auteur_auteurs_cites}.csv',sep=',',encoding='utf-32',usecols=['auteur','auteurs_cités'],index_col='auteur')   #DF {auteur:auteurs_cités}
-#ref = pd.read_csv(f'{article_ref}.csv',sep=',',usecols=['id_article','references'],index_col='id_article')    #DF {article:references}
 
-with open('dict_a.json', 'r', encoding='utf-32') as file:
+with open(f'data/{nom_dict[0]}.json', 'r', encoding='utf-32') as file:
     dict_a = json.load(file)
-with open('dict_p.json', 'r', encoding='utf-32') as file:
+with open(f'data/{nom_dict[1]}.json', 'r', encoding='utf-32') as file:
     dict_p = json.load(file)
-with open('dict_ref_cite.json', 'r', encoding='utf-8') as file:
+with open(f'data/{nom_dict[2]}.json', 'r', encoding='utf-8') as file:
     dict_cite = json.load(file)
-with open('dict_ref_influence.json', 'r', encoding='utf-8') as file:
+with open(f'data/{nom_dict[3]}.json', 'r', encoding='utf-8') as file:
     dict_est_cite = json.load(file)
-
-
-'''class Article: #OK
-    """
-    Un article = un id + une liste d'auteurs
-    """
-    def __init__(self,given_id):
-        self.id=int(given_id)
-        self.ref=ref.references[self.id]
-        self.auteurs=data.auteurs[self.id]'''
 
 
 class Auteur: #OK
 
     """
-    Les éléments de la classe auteur ont deux attributs: name et liste_articles
+    Les éléments de la classe auteur possèdent un attribut name
     """
 
     def __init__(self, name):
         self.name = name
-        '''try:
-            self.liste_articles = data2.id_articles[f'{self.name}']
-        except KeyError:
-            pass'''
 
     def cite(self, N=1):
         """
@@ -129,16 +110,14 @@ class Auteur: #OK
 
 class Communaute():
 
-    #mat_adj = pd.DataFrame()
-
     def __init__(self, auteur, profondeur):
         self.auteur_central = Auteur(auteur)
         self.auteur = Auteur(auteur)
         self.profondeur = profondeur
         self.membres = {}
         
-        dict_cite=self.auteur_central.cite(self.profondeur)
-        dict_influences=self.auteur_central.influences(self.profondeur)
+        dict_cite = self.auteur_central.cite(self.profondeur)
+        dict_est_cite = self.auteur_central.est_cite(self.profondeur)
 
         """ #Ou on peut aussi utiliser cette méthode plus rapide pour construire self.membre
         dict_influences = defaultdict(lambda: 0)
@@ -149,51 +128,19 @@ class Communaute():
         """
 
         #On a les liste des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
-        liste_auteurs = list(set(dict_cite.keys()) & set(dict_influences.keys()))
+        liste_auteurs = list(set(dict_cite.keys()) & set(dict_est_cite.keys()))
         #Construisons ensuite le dictionnaire {auteur : influence} où influence est la moyenne des influences vers l'auteur et depuis l'auteur
         for auteur in liste_auteurs:
-            self.membres[auteur] = (dict_cite[auteur] + dict_influences[auteur]) / 2
+            self.membres[auteur] = (dict_cite[auteur] + dict_est_cite[auteur]) / 2
                     
     def graph(self):
         """
         """
         g = nx.Graph()
         #On trace les relations entre l'auteur central et les membres de la communautés (pour le moment j'utilise un attribut weight)
-        g.add_edges_from([(self.auteur_central,membre_i,{'weight': self.membres[membre_i]}) for membre_i in self.membres.keys()])
-
+        g.add_edges_from([(self.auteur_central,membre_i,{'weight': sqrt(self.membres[membre_i]+1)}) for membre_i in self.membres.keys()])
+        # modifié le label de l'auteur
         plt.figure()
-        nx.draw(g)
+        nx.draw(g, with_labels=True)
         plt.show()
         return
-
-
-    '''# la matrice d'adjacence exporté fais plus de 300Mo => FBI
-    def mat_adj(self, N):
-        mat_adj=pd.DataFrame()
-        n = len(data2)
-        mat = np.zeros((n,n), int)
-        auteurs = list(data2.index)
-
-        # création d'un DF avec le nom des auteurs en index et colonnes
-        mat_adj = pd.DataFrame(mat, index=auteurs, columns=auteurs, dtype=float) # memory_usage : 112608*2
-        return mat_adj
-
-        # ligne par ligne on fait +1 lorsque un auteur est cité
-        for auteur in auteurs:
-            try:
-                if '(' in auteur:
-                    print(auteur)
-            except TypeError:
-                print(auteur)
-            try:
-                tmp = list(Auteur(auteur).cite(1).keys())
-            except TypeError:
-                pass
-            if tmp != []:
-                #print(tmp)
-                try:
-                    mat_adj.loc[auteur][tmp] = 1
-                except KeyError:
-                    pass
-        mat_adj.to_csv('mat_adj.csv')
-        return'''

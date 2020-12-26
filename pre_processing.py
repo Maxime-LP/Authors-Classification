@@ -1,7 +1,5 @@
-from config import fp_articles, fp_ref, file_data_name #, article_auteurs, auteur_articles, auteur_auteurs_cites, article_ref
-#import pandas as pd
+from config import fp_articles, fp_ref, nom_dict
 import json
-#import numpy as np
 import re
 import os
 import platform
@@ -76,9 +74,6 @@ def pp_articles(chemin_articles,chemin_references):
 	Sorties : 
 	"""
 
-	# on recupère dict_ref_cite
-	#dict_ref = pp_references(chemin_references) # plus besoin
-
 	#récupération des fichiers dans l'arborescence
 	years = sorted(os.listdir(chemin_articles))
 	files = []
@@ -91,11 +86,10 @@ def pp_articles(chemin_articles,chemin_references):
 		i += 1
 
 
-	# début du pre-processing
+	# dict {papier: [auteur1, ...]}
 	dict_p = defaultdict(list)
 	# dict {auteur : [papier1, ...]}
 	dict_a = defaultdict(list)
-	#dict_aa = defaultdict(list) # à supprimer et tout ce qui s'y rapporte
 	
 	progression=1
 
@@ -141,27 +135,12 @@ def pp_articles(chemin_articles,chemin_references):
 		for author in authors:
 			dict_a[author].append(paper)
 
-	# à supprimer
-	'''for auteur in dict_a.keys():
-		auteurs_cites = []
-		# pour les papiers d'un auteur
-		for papier in dict_a[auteur]:
-			# on récupère les papiers cités par l'auteur
-			papiers_cites = dict_ref[int(papier)]
-			for papier_cite in papiers_cites:
-				auteurs_cites = list(set(auteurs_cites) | set(dict_p[papier_cite]))
-		try:
-			auteurs_cites.remove(auteur)
-		except ValueError:
-			pass
-		dict_aa[auteur] = auteurs_cites'''
-
 	# Informations sur le dossier articles
 	nb_articles = len(dict_p)
 	nb_auteurs = len(dict_a)
 	print(f'> Le dossier articles contient {nb_files} fichiers, {nb_articles} publications et {nb_auteurs} auteurs.')
 	
-	return dict_a, dict_p #, dict_aa
+	return dict_a, dict_p
 ########### fin pp_articles ############
 
 
@@ -180,44 +159,19 @@ def pre_processing(articles, references):
 
 			# créations de dictionnaires contenant les données triées
 			dict_a, dict_p = pp_articles(chemin_articles,chemin_references)
-			dict_ref_cite, dict_ref_influence = pp_references(chemin_references)
-			with open(f'dict_a.json', 'w',encoding='utf-32') as file:
-				json.dump(dict_a, file)
-			with open(f'dict_p.json', 'w',encoding='utf-32') as file:
-				json.dump(dict_p, file)
-			with open(f'dict_ref_cite.json', 'w',encoding='utf-8') as file:
-				json.dump(dict_ref_cite, file)
-			with open(f'dict_ref_influence.json', 'w',encoding='utf-8') as file:
-				json.dump(dict_ref_influence, file)
-
-			'''# conversions en DataFrames et mise en forme de ces derniers
-				# pour df_p
-			df_p = pd.DataFrame({'id_article':dict_p.keys(), 'auteurs': dict_p.values()})
-			df_p.set_index('id_article', inplace=True)
-			df_p.sort_index(axis=0, inplace=True)
-
-				# pour df_a
-			df_a = pd.DataFrame({'auteur':dict_a.keys(), 'id_articles':dict_a.values()})
-			df_a.set_index('auteur', inplace=True)
-
-				# pour df_aa
-			df_aa = pd.DataFrame({'auteur':dict_aa.keys(), 'auteurs cités':dict_aa.values()})
-			df_aa.set_index('auteur', inplace=True)
-
-				# pour df_ref
-			df_ref = pd.DataFrame({'references':dict_ref.values(), 'id_article':dict_ref.keys()})
-			df_ref.set_index('id_article', inplace=True)
-
-			#Ecriture dans des fichiers csv
-			df_p.to_csv(f'{article_auteurs}.csv',index='id_article', encoding='utf_32')
-			df_a.to_csv(f'{auteur_articles}.csv',index='auteur', encoding='utf_32')
-			df_aa.to_json(f'{auteur_auteurs_cites}.json', orient='columns')
-			df_ref.to_csv(f'{article_ref}.csv')
-
-
-			#PROBLEME : les valeurs des DF sont bien des listes, mais apres export dans des csv ce sont des str !
-			'''
+			dict_cite, dict_est_cite = pp_references(chemin_references)
 			
+			os.makedirs('data', exist_ok=True)
+
+			with open(f'data/{nom_dict[0]}.json', 'w',encoding='utf-32') as file:
+				json.dump(dict_a, file)
+			with open(f'data/{nom_dict[1]}.json', 'w',encoding='utf-32') as file:
+				json.dump(dict_p, file)
+			with open(f'data/{nom_dict[2]}.json', 'w',encoding='utf-8') as file:
+				json.dump(dict_cite, file)
+			with open(f'data/{nom_dict[3]}.json', 'w',encoding='utf-8') as file:
+				json.dump(dict_est_cite, file)
+
 			print("> Fin du chargement des données.")
 
 		else:

@@ -7,7 +7,9 @@ fp_articles = r'/home/amait/Documents/python/POO-Projet/'
 fp_ref = r'/home/amait/Documents/python/POO-Projet/'
 
 # nom des fichiers créés après le pre-processing
-#article_auteurs = "df_p"
-#auteur_articles = "df_a"
-file_data_name = "df_aa"
-#article_ref = "df_ref"
+dict_a = "dict_p"
+dict_p = "dict_a"
+dict_cite = "dict_cite"
+dict_est_cite = "dict_est_cite"
+
+nom_dict = [dict_a, dict_p, dict_cite, dict_est_cite]
