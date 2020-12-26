@@ -129,17 +129,22 @@ class Communaute():
 
         #On a les liste des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
         liste_auteurs = list(set(dict_cite.keys()) & set(dict_est_cite.keys()))
-        #Construisons ensuite le dictionnaire {auteur : influence} où influence est la moyenne des influences vers l'auteur et depuis l'auteur
+        #Construisons ensuite le dictionnaire {auteur : influence}
+        # L'influence est la moyenne des influences vers l'auteur et depuis l'auteur 
+        # à laquelle on applique la fonction bijective sqrt(influence)+1 pour l'esthétisme de l'affichage
         for auteur in liste_auteurs:
-            self.membres[auteur] = (dict_cite[auteur] + dict_est_cite[auteur]) / 2
+            self.membres[auteur] = sqrt((dict_cite[auteur] + dict_est_cite[auteur]) / 2) + 1
+        print(self.membres)
                     
     def graph(self):
         """
+        Affiche une représentation de la communauté autour de self pour un profondeur donnée.
         """
         g = nx.Graph()
         #On trace les relations entre l'auteur central et les membres de la communautés (pour le moment j'utilise un attribut weight)
-        g.add_edges_from([(self.auteur_central,membre_i,{'weight': sqrt(self.membres[membre_i]+1)}) for membre_i in self.membres.keys()])
+        g.add_edges_from([(self.auteur_central.name,membre_i,{'weight': self.membres[membre_i]}) for membre_i in self.membres.keys()])
         # modifié le label de l'auteur
+        pos = nx.spring_layout(g)
         plt.figure()
         nx.draw(g, with_labels=True)
         plt.show()
