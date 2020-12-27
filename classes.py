@@ -5,8 +5,10 @@ from collections import defaultdict
 from config import fp_articles, fp_ref, nom_dict 
 import time
 import networkx as nx
+import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 from math import sqrt
+
 
 
 with open(f'data/{nom_dict[0]}.json', 'r', encoding='utf-32') as file:
@@ -134,21 +136,84 @@ class Communaute():
         # à laquelle on applique la fonction bijective sqrt(influence)+1 pour l'esthétisme de l'affichage
         for auteur in liste_auteurs:
             self.membres[auteur] = sqrt((dict_cite[auteur] + dict_est_cite[auteur]) / 2) + 1
-        print(self.membres)
+
                     
     def graph(self):
         """
         Affiche une représentation de la communauté autour de self pour un profondeur donnée.
         """
-        g = nx.Graph()
+        print(self.membres)
+        G = nx.Graph()
         #On trace les relations entre l'auteur central et les membres de la communautés (pour le moment j'utilise un attribut weight)
-        g.add_edges_from([(self.auteur_central.name,membre_i,{'weight': self.membres[membre_i]}) for membre_i in self.membres.keys()])
-        # modifié le label de l'auteur
-        pos = nx.spring_layout(g)
-        plt.figure()
-        nx.draw(g, with_labels=True)
-        plt.show()
+        G.add_edges_from([(self.auteur_central.name,membre_i,{'weight': self.membres[membre_i]}) for membre_i in self.membres.keys()])
+        
+        # on ajoute un attribut pos pour afficher le graph avec plotly
+        pos = nx.spring_layout(G, k=0.5)
+        for n, p in pos.items():
+            G.nodes[n]['pos'] = p
+
+        edge_trace = go.Scatter(
+            x = [],
+            y = [],
+            line = dict(width=0.5, color='#888'),
+            hoverinfo = 'none',
+            mode = 'lines')
+
+        for edge in G.edges():
+            x0, y0 = G.nodes[edge[0]]['pos']
+            x1, y1 = G.nodes[edge[1]]['pos']
+            edge_trace['x'] += tuple([x0, x1, None])
+            edge_trace['y'] += tuple([y0, y1, None])
+            
+        node_trace = go.Scatter(
+            x = [],
+            y = [],
+            text = [],
+            mode = 'markers',
+            hoverinfo = 'text',
+            marker = dict(
+                showscale = True,
+                colorscale = 'Blues',
+                color = [],
+                size = 10,
+                colorbar = dict(
+                    thickness = 15,
+                    title = 'Intensité moyenne des influences',
+                    xanchor='left',
+                    titleside='right'
+                ),
+                line=dict(width=2)))
+
+        for node in G.nodes():
+            x, y = G.nodes[node]['pos']
+            node_trace['x'] += tuple([x])
+            node_trace['y'] += tuple([y])
+
+
+        for node in G.nodes():
+            try:
+                node_trace['marker']['color'] += tuple([self.membres[node]])
+                node_info = node +' / Moyenne des influences : ' + str(round(self.membres[node],2))
+                node_trace['text'] += tuple([node_info])
+            except KeyError:
+                #node_trace['marker']['color'] += tuple([self.membres[node]])
+                node_info = node
+                node_trace['text'] += tuple([node_info])
+
+        fig = go.Figure(data=[edge_trace, node_trace],
+             layout=go.Layout(
+                title = f'Communauté autour de l\'auteur {self.auteur_central.name}',
+                titlefont = dict(size=16),
+                showlegend = False,
+                hovermode = 'closest',
+                margin = dict(b=20,l=5,r=5,t=40),
+                #annotations = [ dict(text="No. of connections",showarrow=False,xref="paper", yref="paper") ],
+                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+        fig.show()
         return
+
+
 
 
 # => Pour transformer un graph networkx en graph ploly:
