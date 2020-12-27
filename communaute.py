@@ -9,6 +9,8 @@ articles et d'un fichier contenant les références des articles.
 import sys
 import numpy as np
 from pre_processing import pre_processing
+import pprint
+pp = pprint.PrettyPrinter(depth=4)
 # importation les fichiers json uniquement après avoir init
 if sys.argv[1] != 'init':
 	from classes import Auteur, Communaute #, Article
@@ -35,10 +37,10 @@ if __name__ == "__main__":
 		pre_processing(sys.argv[2], sys.argv[3])
 
 	elif sys.argv[1] == 'cite':
-		print(Auteur(sys.argv[2]).cite(sys.argv[3]))
+		pp.pprint(Auteur(sys.argv[2]).cite(sys.argv[3]))
 
 	elif sys.argv[1] == 'est_cite':
-		print(Auteur(sys.argv[2]).est_cite(sys.argv[3]))
+		pp.pprint(Auteur(sys.argv[2]).est_cite(sys.argv[3]))
 
 	elif sys.argv[1] == 'communaute':
 		Communaute(sys.argv[2],sys.argv[3]).graph()
