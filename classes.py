@@ -142,7 +142,6 @@ class Communaute():
         """
         Affiche une représentation de la communauté autour de self pour un profondeur donnée.
         """
-        print(self.membres)
         G = nx.Graph()
         #On trace les relations entre l'auteur central et les membres de la communautés (pour le moment j'utilise un attribut weight)
         G.add_edges_from([(self.auteur_central.name,membre_i,{'weight': self.membres[membre_i]}) for membre_i in self.membres.keys()])
@@ -190,14 +189,15 @@ class Communaute():
             node_trace['y'] += tuple([y])
 
 
+
         for node in G.nodes():
             try:
                 node_trace['marker']['color'] += tuple([self.membres[node]])
-                node_info = node +' / Moyenne des influences : ' + str(round(self.membres[node],2))
+                node_info = node +' / Moyenne des influences : ' + str(round(self.membres[node],4))
                 node_trace['text'] += tuple([node_info])
             except KeyError:
-                #node_trace['marker']['color'] += tuple([self.membres[node]])
-                node_info = node
+                node_trace['marker']['color'] += tuple([0])
+                node_info = node + ' / # connexions : ' + str(len(G.edges))
                 node_trace['text'] += tuple([node_info])
 
         fig = go.Figure(data=[edge_trace, node_trace],
@@ -207,14 +207,7 @@ class Communaute():
                 showlegend = False,
                 hovermode = 'closest',
                 margin = dict(b=20,l=5,r=5,t=40),
-                #annotations = [ dict(text="No. of connections",showarrow=False,xref="paper", yref="paper") ],
                 xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
         fig.show()
         return
-
-
-
-
-# => Pour transformer un graph networkx en graph ploly:
-#    https://medium.com/@anand0427/network-graph-with-at-t-data-using-plotly-a319f9898a02
