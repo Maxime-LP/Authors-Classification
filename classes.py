@@ -133,7 +133,7 @@ class Communaute():
         liste_auteurs = list(set(dict_cite.keys()) & set(dict_est_cite.keys()))
         #Construisons ensuite le dictionnaire {auteur : influence}
         # L'influence est la moyenne des influences vers l'auteur et depuis l'auteur 
-        # à laquelle on applique la fonction bijective sqrt(influence)+1 pour l'esthétisme de l'affichage
+        # à laquelle on applique la fonction bijective sur R+ sqrt(influence)+1 pour l'esthétisme de l'affichage
         for auteur in liste_auteurs:
             self.membres[auteur] = sqrt((dict_cite[auteur] + dict_est_cite[auteur]) / 2) + 1
 
@@ -145,7 +145,9 @@ class Communaute():
         G = nx.Graph()
         #On trace les relations entre l'auteur central et les membres de la communautés (pour le moment j'utilise un attribut weight)
         G.add_edges_from([(self.auteur_central.name,membre_i,{'weight': self.membres[membre_i]}) for membre_i in self.membres.keys()])
-        
+        #ou
+        #G.add_weighted_edges_from([(self.auteur_central.name,membre_i,self.membres[membre_i]) for membre_i in self.membres.keys()],weight='weight')
+
         # on ajoute un attribut pos pour afficher le graph avec plotly
         pos = nx.spring_layout(G, k=0.5)
         for n, p in pos.items():
