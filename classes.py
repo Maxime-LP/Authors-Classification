@@ -119,7 +119,7 @@ class Auteur: #OK
                                 auteurs_qui_citent[auteur] += 1/k
                 except KeyError:
                     pass
-
+                    
         return auteurs_qui_citent
 
 

@@ -48,10 +48,16 @@ if __name__ == "__main__":
 			pre_processing(sys.argv[2], sys.argv[3])
 
 		elif sys.argv[1] == 'cite':
-			pp.pprint(Auteur(sys.argv[2]).cite(sys.argv[3]))
+			res = Auteur(sys.argv[2]).cite(sys.argv[3])
+			# tri des valeurs du dictionnaire
+			res = sorted(res.items(), key=lambda t: t[1])
+			# affichage avec le module pretty print
+			pp.pprint(res)
 
 		elif sys.argv[1] == 'est_cite':
-			pp.pprint(Auteur(sys.argv[2]).est_cite(sys.argv[3]))
+			res = Auteur(sys.argv[2]).est_cite(sys.argv[3])
+			res = sorted(res.items(), key=lambda t: t[1])
+			pp.pprint(res)
 
 		elif sys.argv[1] == 'communaute':
 			Communaute(sys.argv[2],sys.argv[3]).graph()
