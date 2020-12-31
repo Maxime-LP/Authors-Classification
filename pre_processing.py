@@ -153,7 +153,6 @@ def pre_processing(articles, references):
 
 	chemin_articles = fp_articles + articles
 	chemin_references = fp_ref + references
-
 	if os.path.exists(chemin_articles): # Test d'acces au fichier articles
 		if os.path.exists(chemin_references): # Test d'acces au fichier references
 
@@ -175,7 +174,10 @@ def pre_processing(articles, references):
 			print("> Fin du chargement des données.")
 
 		else:
-			print(f'Problème d\'accès au fichier \'{references}\'. Veuillez vérifier le nom du fichier.')
+			print(f'Problème d\'accès au fichier \'{references}\'')
+			print('Veuillez vérifier le nom du fichier ainsi que les données du fichier \'config.py\'.')
 	else:
-		print(f'Problème d\'accès au fichier \'{articles}\'. Veuillez vérifier le nom du fichier.')
+		print(f'Problème d\'accès au fichier \'{articles}\'.')
+		print('Veuillez vérifier le nom du fichier ainsi que les données du fichier \'config.py\'.')
+
 ########### fin pre_processing ############

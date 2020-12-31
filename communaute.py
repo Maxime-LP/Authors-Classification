@@ -2,18 +2,32 @@
 
 """
 Programme permettant de comprendre le fonctionnement d'une commuanauté 
-scientifique à partir d'un jeu de données comportant les résumé des 
+scientifique à partir d'un jeu de données comportant les résumés des 
 articles et d'un fichier contenant les références des articles.
 """
 
 import sys
-import numpy as np
+
+# fonction pour traiter les fichiers de base
 from pre_processing import pre_processing
+
+# pour l'affichage des fonction 'cite' et 'est_cite'
 import pprint
 pp = pprint.PrettyPrinter(depth=4)
+
 # importation les fichiers json uniquement après avoir init
-if sys.argv[1] != 'init':
-	from classes import Auteur, Communaute #, Article
+try:
+	if sys.argv[1] != 'init':
+		from classes import Auteur, Communaute
+except IndexError:
+	print('Argument(s) invalide(s).')
+	sys.exit()
+except FileNotFoundError:
+	print('Veuillez fournir des données à l\'aide de la commande init.')
+	print('Pour plus d\'informations taper \'./communaute aide\'')
+	sys.exit()
+
+
 
 
 def aide():
@@ -26,29 +40,26 @@ def aide():
 if __name__ == "__main__":
 
 	# selection d'une commande		
-	#try:
-	if sys.argv[1] == 'test':
-		test_df()
+	try:
+		if sys.argv[1]=='aide':
+			aide()
 
-	if sys.argv[1] == 'aide':
-		aide()
+		elif sys.argv[1] == 'init':
+			pre_processing(sys.argv[2], sys.argv[3])
 
-	elif sys.argv[1] == 'init':
-		pre_processing(sys.argv[2], sys.argv[3])
+		elif sys.argv[1] == 'cite':
+			pp.pprint(Auteur(sys.argv[2]).cite(sys.argv[3]))
 
-	elif sys.argv[1] == 'cite':
-		pp.pprint(Auteur(sys.argv[2]).cite(sys.argv[3]))
+		elif sys.argv[1] == 'est_cite':
+			pp.pprint(Auteur(sys.argv[2]).est_cite(sys.argv[3]))
 
-	elif sys.argv[1] == 'est_cite':
-		pp.pprint(Auteur(sys.argv[2]).est_cite(sys.argv[3]))
+		elif sys.argv[1] == 'communaute':
+			Communaute(sys.argv[2],sys.argv[3]).graph()
 
-	elif sys.argv[1] == 'communaute':
-		Communaute(sys.argv[2],sys.argv[3]).graph()
+		else:
+			raise KeyError
 
-	else:
-		print('Saisie non-valide. Tapez \'./communaute aide\' pour plus d\'informations.')
-
-	'''except KeyError:
-					print('Commande invalide. Pour plus d\'informations taper \'./communaute help\'')
-				except IndexError:
-					print('Argument(s) invalide(s).')'''
+	except KeyError:
+		print(f'La commande \'{sys.argv[1]}\' n\'est pas valide. Pour plus d\'informations taper \'./communaute aide\'')
+	except IndexError:
+		print('Argument(s) invalide(s).')
