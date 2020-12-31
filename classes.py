@@ -144,9 +144,9 @@ class Communaute():
         """
         G = nx.Graph()
         #On trace les relations entre l'auteur central et les membres de la communautés (pour le moment j'utilise un attribut weight)
-        G.add_edges_from([(self.auteur_central.name,membre_i,{'weight': self.membres[membre_i]}) for membre_i in self.membres.keys()])
+        #G.add_edges_from([(self.auteur_central.name,membre_i,{'weight': self.membres[membre_i]}) for membre_i in self.membres.keys()])
         #ou
-        #G.add_weighted_edges_from([(self.auteur_central.name,membre_i,self.membres[membre_i]) for membre_i in self.membres.keys()],weight='weight')
+        G.add_weighted_edges_from([(self.auteur_central.name,membre_i,self.membres[membre_i]) for membre_i in self.membres.keys()],weight='weight')
 
         # on ajoute un attribut pos pour afficher le graph avec plotly
         pos = nx.spring_layout(G, k=0.5)
@@ -191,13 +191,13 @@ class Communaute():
             node_trace['y'] += tuple([y])
 
 
-
         for node in G.nodes():
             try:
                 node_trace['marker']['color'] += tuple([self.membres[node]])
                 node_info = node +' / Moyenne des influences : ' + str(round(self.membres[node],4))
                 node_trace['text'] += tuple([node_info])
             except KeyError:
+                print(G.edges)
                 node_trace['marker']['color'] += tuple([0])
                 node_info = node + ' / # connexions : ' + str(len(G.edges))
                 node_trace['text'] += tuple([node_info])
