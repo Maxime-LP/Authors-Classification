@@ -18,7 +18,7 @@ pp = pprint.PrettyPrinter(depth=4)
 # importation les fichiers json uniquement après avoir init
 try:
 	if sys.argv[1] != 'init':
-		from classes import Auteur, Communaute
+		from classes import Auteur, Communaute, mat_adj
 except IndexError:
 	print('Argument(s) invalide(s).')
 	sys.exit()
@@ -61,6 +61,9 @@ if __name__ == "__main__":
 
 		elif sys.argv[1] == 'communaute':
 			Communaute(sys.argv[2],sys.argv[3]).graph()
+
+		elif sys.argv[1] == 'communaute_info':
+			mat_adj()
 
 		else:
 			raise KeyError

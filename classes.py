@@ -232,3 +232,34 @@ class Communaute():
                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
         
         fig.show()
+        return
+
+
+def mat_adj():
+    import pandas as pd
+    import numpy as np
+
+    mat_adj = pd.DataFrame()
+
+    n = len(dict_a)
+    mat = np.zeros((n,n), int)
+
+    auteurs = list(dict_a.keys())
+
+    # création d'un DF avec le nom des auteurs en index et colonnes
+    mat_adj = pd.DataFrame(mat, index=auteurs, columns=auteurs, dtype=float) # memory_usage : 112608*2
+    print('ok')
+    # ligne par ligne on fait +1 lorsque un auteur est cité
+    for auteur in auteurs:
+        try:
+            tmp = list(Auteur(auteur).cite(1).keys())
+        except TypeError:
+            pass
+        
+        if tmp != []:
+            try:
+                mat_adj.loc[auteur][tmp] = 1
+            except KeyError:
+                pass
+    print(mat_adj.head())
+    #mat_adj.to_csv('mat_adj.csv')
