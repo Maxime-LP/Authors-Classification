@@ -7,7 +7,6 @@ from config import fp_articles, fp_ref, nom_dict
 import time
 import networkx as nx
 import plotly.graph_objects as go
-import matplotlib.pyplot as plt
 from math import sqrt
 
 
@@ -22,8 +21,7 @@ with open(f'data/{nom_dict[3]}.json', 'r', encoding='utf-8') as file:
     dict_est_cite = json.load(file)
 
 
-class Auteur: #OK
-
+class Auteur:
     """
     Les éléments de la classe auteur possèdent un attribut name
     """
@@ -31,19 +29,21 @@ class Auteur: #OK
     def __init__(self, name):
         self.name = name
 
+
     def cite(self, N=1):
         """
-        Entrées : nom d'un auteur, profondeur des citations
-        Sorties : dictionnaire de la forme {auteur_cité : influence_sur_l'auteur}
+        Entrées : nom d'un auteur (str), profondeur des citations (entier naturel non nul)
+        Sorties : liste de la forme (auteur_cité : influence_sur_l'auteur)
         """
+
         # vérif que sys.arg[2] est bien un entier naturel non-nul
         try:
             N = int(N)
             if not int(N) > 0: raise ValueError
         except ValueError:
             print('Saisir un entier naturel non nul pour la profondeur.')
-            print('Veuillez respecter la casse et ne pas mettre d\'espace dans le nom de l\'auteur.')
-            sys.exit()
+            print('Veuillez respecter la casse, les caractères spéciaux et ne pas mettre d\'espace dans le nom de l\'auteur.')
+            exit()
 
         # dict final
         auteurs_cites = defaultdict(lambda:0) #Par défaut le dict associe un 0 donc si un objet e n'y est pas, auteurs_cites[e]=0. Plus rapide à tester qu'un test in
@@ -52,8 +52,8 @@ class Auteur: #OK
             papiers_rang_suivant = dict_a[self.name]
         except KeyError:
             print('Nom d\'auteur incunnu.')
-            print('Veuillez respecter la casse et ne pas mettre d\'espace dans le nom de l\'auteur.')
-            sys.exit()
+            print('Veuillez respecter la casse, les caractères spéciaux et ne pas mettre d\'espace dans le nom de l\'auteur.')
+            exit()
 
         # boucle sur les profondeurs
         for k in range(1, N+1):
@@ -80,16 +80,17 @@ class Auteur: #OK
     def est_cite(self, N=1):
         """
         Entrés:nom d'un auteur (self), profondeur des citations
-        Sorties : dictionnaire de la forme {auteur_influencé : influence_de_self_sur_l'auteur}
+        Sorties : liste de la forme (auteur_influencé : influence_de_l'auteur_sur_l'auteur)
         """
+
         # vérif que sys.arg[2] est bien un entier naturel non-nul
         try:
             N = int(N)
             if not int(N) > 0: raise ValueError
         except ValueError:
             print('Saisir un entier naturel non nul pour la profondeur.')
-            print('Veuillez respecter la casse et ne pas mettre d\'espace dans le nom de l\'auteur.')
-            sys.exit()
+            print('Veuillez respecter la casse, les caractères spéciaux et ne pas mettre d\'espace dans le nom de l\'auteur.')
+            exit()
 
 
         # dict final
@@ -100,8 +101,8 @@ class Auteur: #OK
             papiers_rang_suivant = dict_a[self.name]
         except KeyError:
             print('Nom d\'auteur incunnu.')
-            print('Veuillez respecter la casse et ne pas mettre d\'espace dans le nom de l\'auteur.')
-            sys.exit()
+            print('Veuillez respecter la casse, les caractères spéciaux et ne pas mettre d\'espace dans le nom de l\'auteur.')
+            exit()
 
         # boucle sur les profondeurs
         for k in range(1, N+1):
@@ -188,19 +189,19 @@ class Communaute():
             y = [],
             text = [],
             mode = 'markers',
-            hoverinfo = 'text',
+            hoverinfo = 'text', # type 
             marker = dict(
                 showscale = True,
-                colorscale = 'Blues',
+                colorscale = 'Blues', # couleur du dégradé
                 color = [],
-                size = 10,
+                size = 10, # taille des points
                 colorbar = dict(
-                    thickness = 15,
-                    title = 'Intensité moyenne des influences',
-                    xanchor='left',
-                    titleside='right'
+                    thickness = 15, # largeur barre colorée 
+                    title = 'Intensité moyenne des influences', # titre barre
+                    xanchor='left', # position de la barre
+                    titleside='right' # position titre de la barre
                 ),
-                line=dict(width=2)))
+                line=dict(width=2))) # largeur contour des points
 
         # on ajoute les noeud créés avec le module networkx
         for node in G.nodes():
@@ -223,11 +224,12 @@ class Communaute():
         # on trace le graphe
         fig = go.Figure(data=[edge_trace, node_trace],
              layout=go.Layout(
-                title = f'Communauté autour de l\'auteur {self.auteur_central.name}',
-                titlefont = dict(size=16),
+                title = f'Communauté autour de l\'auteur {self.auteur_central.name}', # titre du graphe
+                titlefont = dict(size=16), # taille titre
                 showlegend = False,
                 hovermode = 'closest',
-                margin = dict(b=20,l=5,r=5,t=40),
+                margin = dict(b=20,l=5,r=5,t=40), # marge
+                # pour ne pas afficher la grille de fond
                 xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
         
@@ -235,7 +237,7 @@ class Communaute():
         return
 
 
-def mat_adj():
+'''def mat_adj():
     import pandas as pd
     import numpy as np
 
@@ -262,4 +264,4 @@ def mat_adj():
             except KeyError:
                 pass
     print(mat_adj.head())
-    #mat_adj.to_csv('mat_adj.csv')
+    #mat_adj.to_csv('mat_adj.csv')'''

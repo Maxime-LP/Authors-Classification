@@ -18,7 +18,7 @@ pp = pprint.PrettyPrinter(depth=4)
 # importation les fichiers json uniquement après avoir init
 try:
 	if sys.argv[1] != 'init':
-		from classes import Auteur, Communaute, mat_adj
+		from classes import Auteur, Communaute
 except IndexError:
 	print('Argument(s) invalide(s).')
 	sys.exit()
@@ -33,8 +33,12 @@ except FileNotFoundError:
 def aide():
 	print('> Liste des commandes:')
 	print('init  cite  influences communaute')
+
 	print('> Utiliser une commande:')
 	print('./communaute.py maCommande argument1 argument2')
+
+	print('> Obtenir des informations sur une commande:')
+	print('./communaute.py aide_maCommande')
 
 
 if __name__ == "__main__":
@@ -62,8 +66,9 @@ if __name__ == "__main__":
 		elif sys.argv[1] == 'communaute':
 			Communaute(sys.argv[2],sys.argv[3]).graph()
 
-		elif sys.argv[1] == 'communaute_info':
-			mat_adj()
+		elif sys.argv[1][:5] == 'aide_':
+			if sys.argv[1][5:] == 'cite':
+				help(Auteur.cite)
 
 		else:
 			raise KeyError
