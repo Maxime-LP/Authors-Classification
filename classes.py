@@ -7,7 +7,7 @@ from config import fp_articles, fp_ref, nom_dict
 import time
 import networkx as nx
 import plotly.graph_objects as go
-from math import sqrt
+import matplotlib.pyplot as plt
 
 
 
@@ -28,6 +28,7 @@ class Auteur:
 
     def __init__(self, name):
         self.name = name
+        self.relations = {}
 
 
     def cite(self, N=1):
@@ -74,7 +75,6 @@ class Auteur:
 
         return auteurs_cites
 
-
     def est_cite(self, N=1):
         """
         Entrés:nom d'un auteur (self), profondeur des citations
@@ -119,12 +119,28 @@ class Auteur:
                     
         return auteurs_qui_citent
 
+    def contact(self):
+        """
+        Défini l'attribut 'relation' à l'objet auteur.
+        Cet attribut représente la communauté de pronfondeur 1 autour d'un auteur.
+        """
+        dict_cite = self.cite(1)
+        dict_est_cite = self.est_cite(1)
+        # On a les listes des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
+        liste_auteurs = list(set(dict_cite.keys()) & set(dict_est_cite.keys()))
+        # Construisons ensuite le dictionnaire {auteur : influence}
+        # L'influence est la moyenne des influences vers l'auteur et depuis l'auteur
+        for auteur in liste_auteurs:
+            self.relations[auteur] = (dict_cite[auteur] + dict_est_cite[auteur]) / 2
+        return self.relations
+ 
+
 
 class Communaute():
 
     def __init__(self, auteur, profondeur):
         self.auteur_central = Auteur(auteur)
-        self.auteur = Auteur(auteur)
+        #self.auteur = Auteur(auteur)
         self.profondeur = profondeur
         self.membres = {}
         
@@ -225,33 +241,100 @@ class Communaute():
         return
 
 
+class Communaute_relation(Auteur):
 
+    def __init__(self, auteur, profondeur):
+        self.auteur_central = Auteur(auteur)
+        self.profondeur = int(profondeur)
+        self.membres = self.auteur_central.contact()
 
-'''def mat_adj():
-    import pandas as pd
-    import numpy as np
+    def graph(self):
+        G = nx.Graph()
 
-    mat_adj = pd.DataFrame()
-
-    n = len(dict_a)
-    mat = np.zeros((n,n), int)
-
-    auteurs = list(dict_a.keys())
-
-    # création d'un DF avec le nom des auteurs en index et colonnes
-    mat_adj = pd.DataFrame(mat, index=auteurs, columns=auteurs, dtype=float) # memory_usage : 112608*2
-    print('ok')
-    # ligne par ligne on fait +1 lorsque un auteur est cité
-    for auteur in auteurs:
-        try:
-            tmp = list(Auteur(auteur).cite(1).keys())
-        except TypeError:
-            pass
+        auteurs_courant = [self.auteur_central.name]
+        auteurs_suivant = []
         
-        if tmp != []:
+        for k in range(self.profondeur):
+            for auteur in auteurs_courant:
+                relations = Auteur(auteur).contact()
+                print(relations.keys())
+                G.add_weighted_edges_from([(auteur, membre_i, relations[membre_i]) for membre_i in relations.keys()], weight='weight')
+                # altenative : G.add_edge(auteur, membre_i) #, {'weight': relations[membre_i]})
+                
+                auteurs_suivant += list(relations.keys())
+            auteurs_courant = list(set(auteurs_suivant))
+            auteurs_suivant = []
+        
+        # on ajoute un attribut pos pour afficher le graph avec plotly
+        pos = nx.spring_layout(G)
+        for n, p in pos.items():
+            G.nodes[n]['pos'] = p
+
+        # on définit les propriétés graphiques des arrêtes
+        edge_trace = go.Scatter(
+            x = [],
+            y = [],
+            line = dict(width=0.5, color='#888'),
+            hoverinfo = 'none',
+            mode = 'lines')
+
+        # on ajoute les arrête créées avec le module networkx
+        for edge in G.edges():
+            x0, y0 = G.nodes[edge[0]]['pos']
+            x1, y1 = G.nodes[edge[1]]['pos']
+            edge_trace['x'] += tuple([x0, x1, None])
+            edge_trace['y'] += tuple([y0, y1, None])
+        
+        # on définit les propriétés graphiques des noeuds   
+        node_trace = go.Scatter(
+            x = [],
+            y = [],
+            text = [],
+            mode = 'markers',
+            hoverinfo = 'text', # type 
+            marker = dict(
+                showscale = True,
+                colorscale = 'Blues', # couleur du dégradé
+                color = [],
+                size = 10, # taille des points
+                colorbar = dict(
+                    thickness = 15, # largeur barre colorée 
+                    title = 'Intensité moyenne des influences', # titre barre
+                    xanchor='left', # position de la barre
+                    titleside='right' # position titre de la barre
+                ),
+                line=dict(width=2))) # largeur contour des points
+
+        # on ajoute les noeud créés avec le module networkx
+        for node in G.nodes():
+            x, y = G.nodes[node]['pos']
+            node_trace['x'] += tuple([x])
+            node_trace['y'] += tuple([y])
+
+        # on ajoute un affichage : la moyenne des influences
+        for node in G.nodes():
             try:
-                mat_adj.loc[auteur][tmp] = 1
+                node_trace['marker']['color'] += tuple([self.membres[node]])
+                node_info = node +' / Moyenne des influences : ' + str(round(self.membres[node],4))
+                node_trace['text'] += tuple([node_info])
+        # sauf pour l'auteur central   
             except KeyError:
-                pass
-    print(mat_adj.head())
-    #mat_adj.to_csv('mat_adj.csv')'''
+                if node == self.auteur_central.name:
+                    node_trace['marker']['color'] += tuple([0])
+                    node_info = node + ' / # connexions : ' + str(len(G.edges))
+                    node_trace['text'] += tuple([node_info])
+                else: pass
+
+        # on trace le graphe
+        fig = go.Figure(data=[edge_trace, node_trace],
+             layout=go.Layout(
+                title = f'Communauté autour de l\'auteur {self.auteur_central.name}', # titre du graphe
+                titlefont = dict(size=16), # taille titre
+                showlegend = False,
+                hovermode = 'closest',
+                margin = dict(b=20,l=5,r=5,t=40), # marge
+                # pour ne pas afficher la grille de fond
+                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+        
+        fig.show()
