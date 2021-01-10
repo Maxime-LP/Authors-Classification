@@ -303,7 +303,7 @@ class Communaute_relation(Auteur):
                     titleside='right' # position titre de la barre
                 ),
                 line=dict(width=2))) # largeur contour des points
-
+        
         # on ajoute les noeud créés avec le module networkx
         for node in G.nodes():
             x, y = G.nodes[node]['pos']
@@ -356,7 +356,7 @@ class Communaute_relation_bis(Auteur):
                 relations = Communaute(auteur,1)
                 for membre_i in relations.membres.keys():
                     if membre_i != self.auteur_central.name and membre_i in self.communaute_centrale.membres.keys():
-                        G.add_weighted_edges_from([(auteur, membre_i,relations.membres[membre_i])],weight='weight')
+                        G.add_weighted_edges_from([(auteur,membre_i,self.communaute_centrale.membres[membre_i])],weight='weight')
                 
                 auteurs_suivants += list(relations.membres.keys())
             auteurs_courants = list(set(auteurs_suivants))
@@ -374,7 +374,7 @@ class Communaute_relation_bis(Auteur):
             line = dict(width=0.5, color='#888'),
             hoverinfo = 'none',
             mode = 'lines')
-
+        
         # on ajoute les arrête créées avec le module networkx
         for edge in G.edges():
             x0, y0 = G.nodes[edge[0]]['pos']
@@ -407,7 +407,7 @@ class Communaute_relation_bis(Auteur):
             x, y = G.nodes[node]['pos']
             node_trace['x'] += tuple([x])
             node_trace['y'] += tuple([y])
-        
+
         # on ajoute un affichage : la moyenne des influences
         for node in G.nodes():
             try:
