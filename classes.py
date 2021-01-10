@@ -42,7 +42,6 @@ class Auteur:
             if not int(N) > 0: raise ValueError
         except ValueError:
             print('Saisir un entier naturel non nul pour la profondeur.')
-            print('Veuillez respecter la casse, les caractères spéciaux et ne pas mettre d\'espace dans le nom de l\'auteur.')
             exit()
 
         # dict final
@@ -52,7 +51,6 @@ class Auteur:
             papiers_rang_suivant = dict_a[self.name]
         except KeyError:
             print('Nom d\'auteur incunnu.')
-            print('Veuillez respecter la casse, les caractères spéciaux et ne pas mettre d\'espace dans le nom de l\'auteur.')
             exit()
 
         # boucle sur les profondeurs
@@ -89,7 +87,6 @@ class Auteur:
             if not int(N) > 0: raise ValueError
         except ValueError:
             print('Saisir un entier naturel non nul pour la profondeur.')
-            print('Veuillez respecter la casse, les caractères spéciaux et ne pas mettre d\'espace dans le nom de l\'auteur.')
             exit()
 
 
@@ -101,7 +98,6 @@ class Auteur:
             papiers_rang_suivant = dict_a[self.name]
         except KeyError:
             print('Nom d\'auteur incunnu.')
-            print('Veuillez respecter la casse, les caractères spéciaux et ne pas mettre d\'espace dans le nom de l\'auteur.')
             exit()
 
         # boucle sur les profondeurs
@@ -134,14 +130,6 @@ class Communaute():
         
         dict_cite = self.auteur_central.cite(self.profondeur)
         dict_est_cite = self.auteur_central.est_cite(self.profondeur)
-
-        """ #Ou on peut aussi utiliser cette méthode plus rapide pour construire self.membre
-        dict_influences = defaultdict(lambda: 0)
-        for auteur in dict_cite.keys():
-            tmp=Auteur(auteur).cite(self.profondeur)  #C'est un defaultdict(lambda: 0), le test !=0 est plus rapide que le test in keys()
-            if tmp[self.auteur_central.name]!=0:
-                dict_influences[auteur]+=tmp[self.auteur_central.name]
-        """
 
         # On a les listes des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
         liste_auteurs = list(set(dict_cite.keys()) & set(dict_est_cite.keys()))
