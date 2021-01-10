@@ -29,22 +29,37 @@ except FileNotFoundError:
 
 
 
+liste_commandes = {'init' : 'Initialise deux nouveaux fichiers de données\n    argument 1: nom du fichier contenant les articles,\n    argument 2: nom du fichier contenant les références.',
+				   'cite' : 'Affiche les auteurs cités par un auteur avec une profondeur donnée\n    argument 1: nom d\'un auteur,\n    argument 2: entier naturel définissant la profondeur.',
+				   'est_cite' : 'Affiche les auteurs citant un auteur avec une profondeur donnée\n    argument 1: nom d\'un auteur,\n    argument 2: entier naturel définissant la profondeur.',
+				   'communaute' : 'Affiche un graphe représentant les liens entre un auteur et sa communauté pour une profondeur donnée.\n    argument 1: nom d\'un auteur,\n    argument 2: entier naturel définissant la profondeur.',
+				   }
+
+
+########## Documentation utilisateur ##########
 
 def aide():
+	"""Donne des information sur le fonctionnement de l'application."""
 	print('> Liste des commandes:')
-	print('init  cite  influences communaute')
+	print(list(liste_commandes.keys()),'\n')
 
 	print('> Utiliser une commande:')
-	print('./communaute.py maCommande argument1 argument2')
+	print('./communaute.py maCommande argument1 argument2\n')
 
-	print('> Obtenir des informations sur une commande:')
-	print('./communaute.py aide_maCommande')
+	print('> Information sur les commandes:')
+	for commande, docu in liste_commandes.items():
+		print(f'{commande} : {docu}')
+
+	print("\nRemarque : Pour les fonction 'cite', 'est_cite' et 'communaute' veuillez respecter la casse, les caractères spéciaux et ne pas mettre d\'espace dans le nom de l\'auteur.")
+#############################################
+
 
 
 if __name__ == "__main__":
 
 	# selection d'une commande		
 	try:
+
 		if sys.argv[1]=='aide':
 			aide()
 
@@ -65,10 +80,6 @@ if __name__ == "__main__":
 
 		elif sys.argv[1] == 'communaute':
 			Communaute(sys.argv[2],sys.argv[3]).graph()
-
-		elif sys.argv[1][:5] == 'aide_':
-			if sys.argv[1][5:] == 'cite':
-				help(Auteur.cite)
 
 		else:
 			raise KeyError

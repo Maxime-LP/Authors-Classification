@@ -33,7 +33,7 @@ class Auteur:
     def cite(self, N=1):
         """
         Entrées : nom d'un auteur (str), profondeur des citations (entier naturel non nul)
-        Sorties : liste de la forme (auteur_cité : influence_sur_l'auteur)
+        Sorties : dictionnaire de la forme {auteur_cité : influence_sur_l'auteur}
         """
 
         # vérif que sys.arg[2] est bien un entier naturel non-nul
@@ -80,7 +80,7 @@ class Auteur:
     def est_cite(self, N=1):
         """
         Entrés:nom d'un auteur (self), profondeur des citations
-        Sorties : liste de la forme (auteur_influencé : influence_de_l'auteur_sur_l'auteur)
+        Sorties : dictionnaire de la forme {auteur_influencé : influence_de_l'auteur_sur_l'auteur}
         """
 
         # vérif que sys.arg[2] est bien un entier naturel non-nul
@@ -143,18 +143,18 @@ class Communaute():
                 dict_influences[auteur]+=tmp[self.auteur_central.name]
         """
 
-        #On a les liste des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
+        # On a les listes des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
         liste_auteurs = list(set(dict_cite.keys()) & set(dict_est_cite.keys()))
-        #Construisons ensuite le dictionnaire {auteur : influence}
-        # L'influence est la moyenne des influences vers l'auteur et depuis l'auteur 
-        # à laquelle on applique la fonction bijective sur R+ sqrt(influence)+1 pour l'esthétisme de l'affichage
+        # Construisons ensuite le dictionnaire {auteur : influence}
+        # L'influence est la moyenne des influences vers l'auteur et depuis l'auteur
         for auteur in liste_auteurs:
             self.membres[auteur] = (dict_cite[auteur] + dict_est_cite[auteur]) / 2
 
                     
     def graph(self):
         """
-        Affiche une représentation de la communauté autour de self pour un profondeur donnée.
+        Affiche les relations d'un auteur avec les autres auteurs pour un profondeur donnée.
+        Les points apparaissent plus ou moins foncés en fonction de la proximité des auteurs.
         """
 
         G = nx.Graph()
@@ -235,6 +235,8 @@ class Communaute():
         
         fig.show()
         return
+
+
 
 
 '''def mat_adj():
