@@ -76,10 +76,7 @@ if __name__ == "__main__":
 		Communaute(sys.argv[2],sys.argv[3]).graph()
 
 	elif sys.argv[1] == 'communaute2':
-		Communaute_relation(sys.argv[2],sys.argv[3]).graph()
-	
-	elif sys.argv[1] == 'communaute3':
-		Communaute_relation_bis(sys.argv[2],sys.argv[3]).graph()
+		Communaute(sys.argv[2],sys.argv[3]).graph_relations()
 
 	else:
 		raise KeyError

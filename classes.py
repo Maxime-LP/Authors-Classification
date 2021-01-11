@@ -119,7 +119,7 @@ class Auteur:
 class Communaute():
     def __init__(self, auteur, profondeur):
         self.auteur_central = Auteur(auteur)
-        self.profondeur = profondeur
+        self.profondeur = int(profondeur)
         self.membres = {}
         
         dict_cite = self.auteur_central.cite(self.profondeur)
@@ -187,7 +187,7 @@ class Communaute():
             node_trace['y'] += tuple([y])
 
         # on ajoute un affichage : la moyenne des influences
-        for node in G.nodes():
+        #for node in G.nodes():
             try:
                 node_trace['marker']['color'] += tuple([self.membres[node]])
                 node_info = node +' / Moyenne des influences : ' + str(round(self.membres[node],4))
@@ -214,11 +214,104 @@ class Communaute():
         return
 
 
-    def graph2():
+    def graph_relations(self):
         """
         Graph d'une communauté représentant les relations entre les auteurs à l'intérieur de la communauté
+        On représente en fait une succession de graphes de communautés de profondeur 1
         """
+        G = nx.Graph()
+
+        auteurs_courants = [self.auteur_central.name]
+        auteurs_suivants=[]
+        communaute_centrale=list(self.membres.keys())
+
+        for k in range(self.profondeur):
+            for auteur_courant in auteurs_courants:
+                #On récupère la liste des auteurs influencés par l'auteur courant avec prof 1
+                communaute_courante = list(Communaute(auteur_courant,1).membres.keys())
+                try:
+                    liste_auteurs = list (set(communaute_centrale) & set(communaute_courante))
+                    auteurs_suivants += liste_auteurs
+                    G.add_weighted_edges_from([(auteur_courant,auteur_i,self.membres[auteur_i]) for auteur_i in liste_auteurs],weight='weight')
+                except KeyError:
+                    pass
+            auteurs_courants=auteurs_suivants
+            auteurs_suivants=[]
+
+        # on ajoute un attribut pos pour afficher le graph avec plotly
+        pos = nx.spring_layout(G, k=0.5)
+        for n, p in pos.items():
+            G.nodes[n]['pos'] = p
+
+        # on définit les propriétés graphiques des arrêtes
+        edge_trace = go.Scatter(
+            x = [],
+            y = [],
+            line = dict(width=0.5, color='#888'),
+            hoverinfo = 'none',
+            mode = 'lines')
+
+        # on ajoute les arrête créées avec le module networkx
+        for edge in G.edges():
+            x0, y0 = G.nodes[edge[0]]['pos']
+            x1, y1 = G.nodes[edge[1]]['pos']
+            edge_trace['x'] += tuple([x0, x1, None])
+            edge_trace['y'] += tuple([y0, y1, None])
         
+        # on définit les propriétés graphiques des noeuds   
+        node_trace = go.Scatter(
+            x = [],
+            y = [],
+            text = [],
+            mode = 'markers',
+            hoverinfo = 'text', # type 
+            marker = dict(
+                showscale = True,
+                colorscale = 'Blues', # couleur du dégradé
+                color = [],
+                size = 10, # taille des points
+                colorbar = dict(
+                    thickness = 15, # largeur barre colorée 
+                    title = 'Intensité moyenne des influences', # titre barre
+                    xanchor='left', # position de la barre
+                    titleside='right' # position titre de la barre
+                ),
+                line=dict(width=2))) # largeur contour des points
+
+        # on ajoute les noeud créés avec le module networkx
+        for node in G.nodes():
+            x, y = G.nodes[node]['pos']
+            node_trace['x'] += tuple([x])
+            node_trace['y'] += tuple([y])
+
+        # on ajoute un affichage : la moyenne des influences
+        #for node in G.nodes():
+            try:
+                node_trace['marker']['color'] += tuple([self.membres[node]])
+                node_info = node +' / Moyenne des influences : ' + str(round(self.membres[node],4))
+                node_trace['text'] += tuple([node_info])
+        # sauf pour l'auteur central   
+            except KeyError:
+                node_trace['marker']['color'] += tuple([0])
+                node_info = node + ' / # connexions : ' + str(len(G.nodes)-1)
+                node_trace['text'] += tuple([node_info])
+
+        # on trace le graphe
+        fig = go.Figure(data=[edge_trace, node_trace],
+             layout=go.Layout(
+                title = f'Communauté autour de l\'auteur {self.auteur_central.name} avec profondeur {self.profondeur}', # titre du graphe
+                titlefont = dict(size=16), # taille titre
+                showlegend = False,
+                hovermode = 'closest',
+                margin = dict(b=20,l=5,r=5,t=40), # marge
+                # pour ne pas afficher la grille de fond
+                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
+        
+        fig.show()
+        return
+
+
 
 '''class Communaute_relation(Communaute):
 
