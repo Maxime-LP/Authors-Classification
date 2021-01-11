@@ -10,7 +10,6 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 
 
-
 with open(f'data/{nom_dict[0]}.json', 'r', encoding='utf-32') as file:
     dict_a = json.load(file)
 with open(f'data/{nom_dict[1]}.json', 'r', encoding='utf-32') as file:
@@ -119,6 +118,7 @@ class Auteur:
                     
         return auteurs_qui_citent
 
+    
     def contact(self):
         """
         Défini l'attribut 'relation' à l'objet auteur.
@@ -221,7 +221,7 @@ class Communaute():
                 node_trace['text'] += tuple([node_info])
         # sauf pour l'auteur central   
             except KeyError:
-                node_trace['marker']['color'] += tuple([0])
+                node_trace['marker']['color'] = 'r'
                 node_info = node + ' / # connexions : ' + str(len(G.edges))
                 node_trace['text'] += tuple([node_info])
 
@@ -240,9 +240,13 @@ class Communaute():
         fig.show()
         return
 
-class Communaute_relation(Auteur):
 
-    def __init__(self, auteur, profondeur):
+    def graph2():
+        
+
+'''class Communaute_relation(Communaute):
+
+    super().__init__(self, auteur, 1):
         self.auteur_central = Auteur(auteur)
         self.profondeur = int(profondeur)
         self.membres = self.auteur_central.contact()
@@ -262,176 +266,4 @@ class Communaute_relation(Auteur):
                 
                 auteurs_suivant += list(relations.keys())
             auteurs_courant = list(set(auteurs_suivant))
-            auteurs_suivant = []
-        
-        # on ajoute un attribut pos pour afficher le graph avec plotly
-        pos = nx.spring_layout(G)
-        for n, p in pos.items():
-            G.nodes[n]['pos'] = p
-
-        # on définit les propriétés graphiques des arrêtes
-        edge_trace = go.Scatter(
-            x = [],
-            y = [],
-            line = dict(width=0.5, color='#888'),
-            hoverinfo = 'none',
-            mode = 'lines')
-
-        # on ajoute les arrête créées avec le module networkx
-        for edge in G.edges():
-            x0, y0 = G.nodes[edge[0]]['pos']
-            x1, y1 = G.nodes[edge[1]]['pos']
-            edge_trace['x'] += tuple([x0, x1, None])
-            edge_trace['y'] += tuple([y0, y1, None])
-        
-        # on définit les propriétés graphiques des noeuds   
-        node_trace = go.Scatter(
-            x = [],
-            y = [],
-            text = [],
-            mode = 'markers',
-            hoverinfo = 'text', # type 
-            marker = dict(
-                showscale = True,
-                colorscale = 'Blues', # couleur du dégradé
-                color = [],
-                size = 10, # taille des points
-                colorbar = dict(
-                    thickness = 15, # largeur barre colorée 
-                    title = 'Intensité moyenne des influences', # titre barre
-                    xanchor='left', # position de la barre
-                    titleside='right' # position titre de la barre
-                ),
-                line=dict(width=2))) # largeur contour des points
-        
-        # on ajoute les noeud créés avec le module networkx
-        for node in G.nodes():
-            x, y = G.nodes[node]['pos']
-            node_trace['x'] += tuple([x])
-            node_trace['y'] += tuple([y])
-
-        # on ajoute un affichage : la moyenne des influences
-        for node in G.nodes():
-            try:
-                node_trace['marker']['color'] += tuple([self.membres[node]])
-                node_info = node +' / Moyenne des influences : ' + str(round(self.membres[node],4))
-                node_trace['text'] += tuple([node_info])
-        # sauf pour l'auteur central   
-            except KeyError:
-                if node == self.auteur_central.name:
-                    node_trace['marker']['color'] += tuple([0])
-                    node_info = node + ' / # connexions : ' + str(len(G.edges))
-                    node_trace['text'] += tuple([node_info])
-                else: pass
-
-        # on trace le graphe
-        fig = go.Figure(data=[edge_trace, node_trace],
-             layout=go.Layout(
-                title = f'Communauté autour de l\'auteur {self.auteur_central.name}', # titre du graphe
-                titlefont = dict(size=16), # taille titre
-                showlegend = False,
-                hovermode = 'closest',
-                margin = dict(b=20,l=5,r=5,t=40), # marge
-                # pour ne pas afficher la grille de fond
-                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
-        
-        fig.show()
-
-class Communaute_relation_bis(Auteur):
-
-    def __init__(self, auteur, profondeur):
-        self.auteur_central = Auteur(auteur)
-        self.profondeur = int(profondeur)
-        self.communaute_centrale = Communaute(self.auteur_central.name,self.profondeur)
-
-    def graph(self):
-        G = nx.Graph()
-
-        auteurs_courants = [self.auteur_central.name]
-        auteurs_suivants = []
-        
-        for k in range(self.profondeur):
-            for auteur in auteurs_courants:
-                relations = Communaute(auteur,1)
-                for membre_i in relations.membres.keys():
-                    if membre_i != self.auteur_central.name and membre_i in self.communaute_centrale.membres.keys():
-                        G.add_weighted_edges_from([(auteur,membre_i,self.communaute_centrale.membres[membre_i])],weight='weight')
-                
-                auteurs_suivants += list(relations.membres.keys())
-            auteurs_courants = list(set(auteurs_suivants))
-            auteurs_suivants = []
-        
-        # on ajoute un attribut pos pour afficher le graph avec plotly
-        pos = nx.spring_layout(G)
-        for n, p in pos.items():
-            G.nodes[n]['pos'] = p
-
-        # on définit les propriétés graphiques des arrêtes
-        edge_trace = go.Scatter(
-            x = [],
-            y = [],
-            line = dict(width=0.5, color='#888'),
-            hoverinfo = 'none',
-            mode = 'lines')
-        
-        # on ajoute les arrête créées avec le module networkx
-        for edge in G.edges():
-            x0, y0 = G.nodes[edge[0]]['pos']
-            x1, y1 = G.nodes[edge[1]]['pos']
-            edge_trace['x'] += tuple([x0, x1, None])
-            edge_trace['y'] += tuple([y0, y1, None])
-        
-        # on définit les propriétés graphiques des noeuds   
-        node_trace = go.Scatter(
-            x = [],
-            y = [],
-            text = [],
-            mode = 'markers',
-            hoverinfo = 'text', # type 
-            marker = dict(
-                showscale = True,
-                colorscale = 'Blues', # couleur du dégradé
-                color = [],
-                size = 10, # taille des points
-                colorbar = dict(
-                    thickness = 15, # largeur barre colorée 
-                    title = 'Intensité moyenne des influences', # titre barre
-                    xanchor='left', # position de la barre
-                    titleside='right' # position titre de la barre
-                ),
-                line=dict(width=2))) # largeur contour des points
-
-        # on ajoute les noeud créés avec le module networkx
-        for node in G.nodes():
-            x, y = G.nodes[node]['pos']
-            node_trace['x'] += tuple([x])
-            node_trace['y'] += tuple([y])
-
-        # on ajoute un affichage : la moyenne des influences
-        for node in G.nodes():
-            try:
-                node_trace['marker']['color'] += tuple([self.communaute_centrale.membres[node]])
-                node_info = node +' / Moyenne des influences : ' + str(round(self.communaute_centrale.membres[node],4))
-                node_trace['text'] += tuple([node_info])
-        # sauf pour l'auteur central   
-            except KeyError:
-                if node == self.auteur_central.name:
-                    node_trace['marker']['color'] += tuple([0])
-                    node_info = node + ' / # connexions : ' + str(len(G.edges))
-                    node_trace['text'] += tuple([node_info])
-                else: pass
-        
-        # on trace le graphe
-        fig = go.Figure(data=[edge_trace, node_trace],
-             layout=go.Layout(
-                title = f'Communauté autour de l\'auteur {self.auteur_central.name}', # titre du graphe
-                titlefont = dict(size=16), # taille titre
-                showlegend = False,
-                hovermode = 'closest',
-                margin = dict(b=20,l=5,r=5,t=40), # marge
-                # pour ne pas afficher la grille de fond
-                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False)))
-        
-        fig.show()
+            auteurs_suivant = []'''
