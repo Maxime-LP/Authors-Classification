@@ -4,7 +4,6 @@ import re
 import os
 from collections import defaultdict
 from config import fp_articles, fp_ref, nom_dict 
-import time
 import networkx as nx
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
@@ -24,11 +23,9 @@ class Auteur:
     """
     Les éléments de la classe auteur possèdent un attribut name
     """
-
     def __init__(self, name):
         self.name = name
         self.relations = {}
-
 
     def cite(self, N=1):
         """
@@ -88,7 +85,6 @@ class Auteur:
             print('Saisir un entier naturel non nul pour la profondeur.')
             exit()
 
-
         # dict final
         auteurs_qui_citent = defaultdict(lambda:0) #Par défaut le dict associe un 0 donc si un objet e n'y est pas, auteurs_cites[e]=0. Plus rapide à tester qu'un test in
         
@@ -117,43 +113,22 @@ class Auteur:
                     pass
                     
         return auteurs_qui_citent
-
-    
-    def contact(self):
-        """
-        Défini l'attribut 'relation' à l'objet auteur.
-        Cet attribut représente la communauté de pronfondeur 1 autour d'un auteur.
-        """
-        dict_cite = self.cite(1)
-        dict_est_cite = self.est_cite(1)
-        # On a les listes des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
-        liste_auteurs = list(set(dict_cite.keys()) & set(dict_est_cite.keys()))
-        # Construisons ensuite le dictionnaire {auteur : influence}
-        # L'influence est la moyenne des influences vers l'auteur et depuis l'auteur
-        for auteur in liste_auteurs:
-            self.relations[auteur] = (dict_cite[auteur] + dict_est_cite[auteur]) / 2
-        return self.relations
  
 
 
 class Communaute():
-
     def __init__(self, auteur, profondeur):
         self.auteur_central = Auteur(auteur)
-        #self.auteur = Auteur(auteur)
         self.profondeur = profondeur
         self.membres = {}
         
         dict_cite = self.auteur_central.cite(self.profondeur)
         dict_est_cite = self.auteur_central.est_cite(self.profondeur)
-
         # On a les listes des auteurs cités l'auteur central et ceux qui le citent, on cherche ensuite ceux qui sont dans les deux 
         liste_auteurs = list(set(dict_cite.keys()) & set(dict_est_cite.keys()))
-        # Construisons ensuite le dictionnaire {auteur : influence}
-        # L'influence est la moyenne des influences vers l'auteur et depuis l'auteur
+        # Construisons ensuite le dictionnaire {auteur : influence}. L'influence est la moyenne des influences vers l'auteur et depuis l'auteur
         for auteur in liste_auteurs:
             self.membres[auteur] = (dict_cite[auteur] + dict_est_cite[auteur]) / 2
-
                     
     def graph(self):
         """
@@ -162,10 +137,8 @@ class Communaute():
         """
 
         G = nx.Graph()
-        # On trace les relations entre l'auteur central et les membres de la communautés 
-        # avec un attribut weight correspondant à la moyenne des influences.
+        # On trace les relations entre l'auteur central et les membres de la communautés avec un attribut weight correspondant à la moyenne des influences.
         G.add_weighted_edges_from([(self.auteur_central.name,membre_i,self.membres[membre_i]) for membre_i in self.membres.keys()],weight='weight')
-        # altenative : G.add_edges_from([(self.auteur_central.name,membre_i,{'weight': self.membres[membre_i]}) for membre_i in self.membres.keys()])
 
         # on ajoute un attribut pos pour afficher le graph avec plotly
         pos = nx.spring_layout(G, k=0.5)
@@ -221,7 +194,7 @@ class Communaute():
                 node_trace['text'] += tuple([node_info])
         # sauf pour l'auteur central   
             except KeyError:
-                node_trace['marker']['color'] = 'r'
+                node_trace['marker']['color'] += tuple([0])
                 node_info = node + ' / # connexions : ' + str(len(G.edges))
                 node_trace['text'] += tuple([node_info])
 
@@ -242,6 +215,9 @@ class Communaute():
 
 
     def graph2():
+        """
+        Graph d'une communauté représentant les relations entre les auteurs à l'intérieur de la communauté
+        """
         
 
 '''class Communaute_relation(Communaute):

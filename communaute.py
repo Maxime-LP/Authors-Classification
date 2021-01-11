@@ -1,26 +1,21 @@
 #!/usr/bin/env python3
-
 """
-Programme permettant de comprendre le fonctionnement d'une commuanauté 
-scientifique à partir d'un jeu de données comportant les résumés des 
+Programme permettant de comprendre le fonctionnement d'une communauté 
+scientifique à partir d'un jeu de données comportant les abstracts des 
 articles et d'un fichier contenant les références des articles.
 """
 
 ########## Importation des modules ##########
-
 import sys
-
 # fonction pour traiter les fichiers de base
 from pre_processing import pre_processing
-
 # pour l'affichage des fonction 'cite' et 'est_cite'
 import pprint
 pp = pprint.PrettyPrinter(depth=4)
-
 # importation les fichiers json uniquement après avoir init
 try:
 	if sys.argv[1] != 'init':
-		from classes import Auteur, Communaute, Communaute_relation, Communaute_relation_bis
+		from classes import Auteur, Communaute
 except IndexError:
 	print('Argument(s) invalide(s).')
 	sys.exit()
@@ -28,8 +23,8 @@ except FileNotFoundError:
 	print('Veuillez fournir des données à l\'aide de la commande init.')
 	print('Pour plus d\'informations taper \'./communaute aide\'')
 	sys.exit()
-
 #############################################
+
 
 
 ########## Documentation utilisateur ##########
@@ -52,7 +47,6 @@ def aide():
 	for commande, docu in liste_commandes.items():
 		print(f'{commande} : {docu}')
 	print("\nRemarque : Pour les fonction 'cite', 'est_cite' et 'communaute' veuillez respecter la casse, les caractères spéciaux et ne pas mettre d\'espace dans le nom de l\'auteur.")
-
 #############################################
 
 
