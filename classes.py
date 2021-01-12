@@ -229,12 +229,13 @@ class Communaute():
             for auteur_courant in auteurs_courants:
                 #On récupère la liste des auteurs influencés par l'auteur courant avec prof 1
                 communaute_courante = list(Communaute(auteur_courant,1).membres.keys())
-                try:
-                    liste_auteurs = list (set(communaute_centrale) & set(communaute_courante))
-                    auteurs_suivants += liste_auteurs
-                    G.add_weighted_edges_from([(auteur_courant,auteur_i,self.membres[auteur_i]) for auteur_i in liste_auteurs],weight='weight')
-                except KeyError:
-                    pass
+                liste_auteurs = list (set(communaute_centrale) & set(communaute_courante))
+                auteurs_suivants += liste_auteurs
+                for auteur_i in liste_auteurs:
+                    try:
+                        G.add_weighted_edges_from([(auteur_courant,auteur_i,self.membres[auteur_i])],weight='weight')
+                    except KeyError:
+                        pass
             auteurs_courants=auteurs_suivants
             auteurs_suivants=[]
 
