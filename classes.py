@@ -311,29 +311,3 @@ class Communaute():
         
         fig.show()
         return
-
-
-
-'''class Communaute_relation(Communaute):
-
-    super().__init__(self, auteur, 1):
-        self.auteur_central = Auteur(auteur)
-        self.profondeur = int(profondeur)
-        self.membres = self.auteur_central.contact()
-
-    def graph(self):
-        G = nx.Graph()
-
-        auteurs_courant = [self.auteur_central.name]
-        auteurs_suivant = []
-        
-        for k in range(self.profondeur):
-            for auteur in auteurs_courant:
-                relations = Auteur(auteur).contact()
-                print(relations.keys())
-                G.add_weighted_edges_from([(auteur, membre_i, relations[membre_i]) for membre_i in relations.keys()], weight='weight')
-                # altenative : G.add_edge(auteur, membre_i) #, {'weight': relations[membre_i]})
-                
-                auteurs_suivant += list(relations.keys())
-            auteurs_courant = list(set(auteurs_suivant))
-            auteurs_suivant = []'''

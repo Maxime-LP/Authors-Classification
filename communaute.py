@@ -80,8 +80,3 @@ if __name__ == "__main__":
 
 	else:
 		raise KeyError
-
-	#except KeyError:
-		#print(f'La commande \'{sys.argv[1]}\' n\'est pas valide. Pour plus d\'informations taper \'./communaute aide\'')
-	#except IndexError:
-		#print('Argument(s) invalide(s).')
