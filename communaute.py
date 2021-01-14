@@ -52,6 +52,7 @@ def aide():
 
 
 if __name__ == "__main__":
+
 	# selection d'une commande		
 	#try:
 	if sys.argv[1]=='aide':
@@ -73,7 +74,7 @@ if __name__ == "__main__":
 		pp.pprint(res)
 
 	elif sys.argv[1] == 'communaute1':
-		Communaute(sys.argv[2],sys.argv[3]).graph()
+		Communaute(sys.argv[2],sys.argv[3]).graph_simple()
 
 	elif sys.argv[1] == 'communaute2':
 		Communaute(sys.argv[2],sys.argv[3]).graph_relations()

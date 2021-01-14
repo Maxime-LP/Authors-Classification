@@ -7,11 +7,19 @@ from collections import defaultdict
 from pylatexenc.latex2text import LatexNodes2Text
 #Installation du module pylatexenc : pip install git+https://github.com/phfaist/pylatexenc.git
 
+
+
+# Fonctions appellées pour nettoyer les données et les mettre en forme (json).
+
 # pp := pre-processing
 
+
+
 ########### début clean ############
+
 def clean(line_tmp):
 	"""
+	Enlève les éléments entre parenthèses.
 	Entrées: ligne contenant les auteurs
 	Sorties : liste conteannt le nom des auteurs
 	"""
@@ -35,10 +43,13 @@ def clean(line_tmp):
 	# On supprime aussi les espaces restant dans les noms d'auteurs et traduit les caractères spéciaux écrit en LaTeX
 	line_tmp = [LatexNodes2Text().latex_to_text(author).replace(" ","") for author in line_tmp]
 	return line_tmp
+
 ########### fin clean ############
 
 
+
 ########### début pp_references ############
+
 def pp_references(chemin_references):
 		"""
 		Pre_processing du fichier texte references.txt
@@ -62,11 +73,14 @@ def pp_references(chemin_references):
 				nb_relations += 1
 
 		return dict_ref_cite , dict_ref_influence
+
 ########### fin pp_references ############
 
 
+
 ########### début pp_articles ############
-def pp_articles(chemin_articles,chemin_references):
+
+def pp_articles(chemin_articles,chemin_references): # amélioration à faire : utliser les regex dans la fonction clean et pour récupérer le nom des auteurs
 	"""
 	Pre-processing du dossier article.d
 	Entrées : noms du fichiers contenant les résumés d'article (arborescence).
@@ -140,11 +154,13 @@ def pp_articles(chemin_articles,chemin_references):
 	print(f'> Le dossier articles contient {nb_files} fichiers, {nb_articles} publications et {nb_auteurs} auteurs.')
 	
 	return dict_a, dict_p
+
 ########### fin pp_articles ############
 
 
 
 ########### début pre_processing ############
+
 def pre_processing(articles, references):
 	'''
 	Pre-processing d'un nouveau jeu de données pour l'application.
